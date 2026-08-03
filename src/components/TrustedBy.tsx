@@ -82,7 +82,7 @@ export default function TrustedBy() {
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-[#F5F7F8] py-20 md:py-24 px-4 md:px-6 xl:px-10 relative overflow-hidden"
+      className="w-full bg-[#F5F7F8] py-[50px] md:py-[80px] lg:py-[100px] px-4 md:px-6 xl:px-10 relative overflow-hidden"
     >
       {/* soft background accents */}
       <div className="absolute -top-24 left-1/4 w-96 h-96 bg-[#1FAE9F]/5 rounded-full blur-3xl pointer-events-none" />

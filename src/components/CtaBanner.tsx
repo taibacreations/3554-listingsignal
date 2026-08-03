@@ -92,7 +92,7 @@ export default function CtaBanner() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="w-full py-16 md:py-24">
+    <section ref={sectionRef} className="w-full py-[50px] md:py-[80px] py-[100px]">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 xl:px-10">
         <div
           ref={cardRef}

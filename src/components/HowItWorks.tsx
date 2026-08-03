@@ -178,7 +178,7 @@ export default function HowItWorks() {
   return (
     <section
       ref={sectionRef}
-      className="w-full bg-white py-24 md:py-28 rounded-t-[2.5rem] relative z-10"
+      className="w-full bg-white lg:py-[100px] md:py-[80px] py-[50px] rounded-t-[2.5rem] relative z-10"
     >
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 xl:px-10">
         {/* Eyebrow + Heading */}

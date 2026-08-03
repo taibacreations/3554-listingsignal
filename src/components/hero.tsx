@@ -15,7 +15,6 @@ export default function Hero() {
   const searchRef = useRef<HTMLDivElement>(null);
   const trustRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
-  const scoreCardRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export default function Hero() {
         .fromTo(searchRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.65 }, "-=0.4")
         .fromTo(trustItems ?? [], { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, "-=0.3")
         .fromTo(
-          scoreCardRef.current,
+          ".score-card",
           { opacity: 0, y: 24, scale: 0.94 },
           { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)" },
           "-=0.5"
@@ -66,7 +65,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="w-full min-h-screen md:min-h-[92vh] relative overflow-hidden flex flex-col">
+    <section className="w-full min-h-[100svh] md:min-h-[92vh] relative overflow-hidden flex flex-col">
       {/* full-bleed background photo */}
       <div
         ref={bgRef}
@@ -79,7 +78,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(11,30,51,0.55),transparent_40%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_15%_0%,rgba(31,174,159,0.16),transparent_60%)]" />
 
-      {/* signature: signal-wave line, echoing the brand's "signal" */}
+      {/* signature: signal-wave line (desktop only) */}
       <svg
         className="absolute right-[2%] top-[8%] h-[45%] w-[45%] opacity-60 pointer-events-none hidden lg:block"
         viewBox="0 0 700 500"
@@ -97,16 +96,16 @@ export default function Hero() {
         />
       </svg>
 
-      <div className="max-w-[1440px] w-full px-4 md:px-6 xl:px-10 mx-auto flex-1 flex flex-col justify-center pt-28 pb-16 relative z-10">
+      <div className="max-w-[1440px] w-full px-4 md:px-6 xl:px-10 mx-auto flex-1 flex flex-col justify-center pt-24 md:pt-28 pb-14 md:pb-16 relative z-10">
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-10 items-end">
           {/* Left content */}
           <div>
             {/* Badge */}
             <div
               ref={badgeRef}
-              className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/15 rounded-full px-4 py-1.5 mb-7 backdrop-blur-sm"
+              className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/15 rounded-full px-4 py-1.5 mb-6 md:mb-7 backdrop-blur-sm"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F] inline-block" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F] inline-block shrink-0" />
               <span className={`${inter.className} text-white/90 text-xs font-medium tracking-wide`}>
                 Trusted by homeowners across Las Vegas
               </span>
@@ -115,7 +114,7 @@ export default function Hero() {
             {/* Headline */}
             <h1
               ref={headlineRef}
-              className={`${playfair.className} text-white text-4xl md:text-[3.6rem] font-semibold leading-[1.08] mb-6 max-w-[95%] md:max-w-[85%]`}
+              className={`${playfair.className} text-white text-[2.15rem] leading-[1.12] sm:text-4xl md:text-[3.6rem] md:leading-[1.08] font-semibold mb-5 md:mb-6 max-w-full md:max-w-[85%]`}
               style={{ perspective: "600px" }}
             >
               <span className="word inline-block">What</span>{" "}
@@ -134,29 +133,31 @@ export default function Hero() {
             {/* Subtext */}
             <p
               ref={subRef}
-              className={`${inter.className} text-white/65 text-base md:text-lg mb-9 max-w-[90%] md:max-w-[80%] leading-relaxed`}
+              className={`${inter.className} text-white/65 text-base md:text-lg mb-8 md:mb-9 max-w-full md:max-w-[80%] leading-relaxed`}
             >
               Real-time home value insights — fast, free, and built for today&apos;s market.
             </p>
 
-            {/* Search bar */}
+            {/* Search bar — stacks vertically on mobile so nothing clips */}
             <div
               ref={searchRef}
-              className="bg-white rounded-xl flex items-center p-1.5 max-w-md mb-9 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-black/[0.03]"
+              className="bg-white rounded-2xl sm:rounded-xl flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-0 p-1.5 max-w-md mb-8 md:mb-9 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-black/[0.03]"
             >
-              <span className="pl-4 pr-2 text-[#0B1E33]">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-              <input
-                type="text"
-                placeholder="Enter your home address..."
-                className={`${inter.className} flex-1 outline-none text-sm text-[#0B1E33] placeholder:text-gray-400 py-2.5`}
-              />
+              <div className="flex items-center flex-1 min-w-0">
+                <span className="pl-3 sm:pl-4 pr-2 text-[#0B1E33] shrink-0">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+                <input
+                  type="text"
+                  placeholder="Enter your home address..."
+                  className={`${inter.className} flex-1 min-w-0 outline-none text-base sm:text-sm text-[#0B1E33] placeholder:text-gray-400 py-2.5`}
+                />
+              </div>
               <button
-                className={`${inter.className} bg-[#1FAE9F] hover:bg-[#189184] text-white text-sm font-semibold rounded-full px-5 py-2.5 flex items-center gap-1.5 whitespace-nowrap transition-colors`}
+                className={`${inter.className} bg-[#1FAE9F] hover:bg-[#189184] text-white text-sm font-semibold rounded-full px-5 py-3 sm:py-2.5 flex items-center justify-center gap-1.5 whitespace-nowrap transition-colors w-full sm:w-auto shrink-0`}
               >
                 See My Home Value
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -165,8 +166,8 @@ export default function Hero() {
               </button>
             </div>
 
-            {/* Trust badges */}
-            <div ref={trustRef} className="flex flex-wrap gap-x-8 gap-y-4">
+            {/* Trust badges — clean stack on mobile, row from sm up */}
+            <div ref={trustRef} className="flex flex-col sm:flex-row sm:flex-wrap gap-4 sm:gap-x-8 sm:gap-y-4">
               <TrustItem
                 icon={
                   <>
@@ -201,14 +202,30 @@ export default function Hero() {
                 subtitle="Quick and simple"
               />
             </div>
+
+            {/* Compact Signal Score — mobile only, replaces the desktop glass card */}
+            <div className="score-card lg:hidden mt-8 bg-white/[0.08] border border-white/15 backdrop-blur-md rounded-xl px-4 py-3.5 flex items-center gap-4 max-w-md">
+              <div className="flex items-end gap-1 shrink-0">
+                <span className={`${playfair.className} text-white text-3xl font-semibold leading-none`}>82</span>
+                <span className={`${inter.className} text-white/50 text-[11px] mb-0.5`}>/100</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className={`${inter.className} text-white/60 text-[10px] font-semibold tracking-[0.15em] uppercase`}>
+                    Signal Score
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F]" />
+                </div>
+                <div className="h-1 w-full rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-full w-[82%] rounded-full bg-[#1FAE9F]" />
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* Right: floating signal score glass card, anchored over the photo */}
+          {/* Right: floating signal score glass card (desktop only) */}
           <div className="hidden lg:flex justify-end">
-            <div
-              ref={scoreCardRef}
-              className="w-[300px] bg-white/[0.08] border border-white/15 backdrop-blur-md rounded-2xl p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)]"
-            >
+            <div className="score-card w-[300px] bg-white/[0.08] border border-white/15 backdrop-blur-md rounded-2xl p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)]">
               <div className="flex items-center justify-between mb-5">
                 <span className={`${inter.className} text-white/60 text-[11px] font-semibold tracking-[0.15em] uppercase`}>
                   Signal Score
@@ -268,8 +285,8 @@ function TrustItem({
         {icon}
       </svg>
       <div className="leading-tight">
-        <div className="text-white text-sm font-semibold">{title}</div>
-        <div className="text-white/50 text-xs">{subtitle}</div>
+        <div className={`${inter.className} text-white text-sm font-semibold`}>{title}</div>
+        <div className={`${inter.className} text-white/50 text-xs`}>{subtitle}</div>
       </div>
     </div>
   );
