@@ -200,7 +200,7 @@ export default function HowItWorks() {
           <p
             className={`${inter.className} how-subtext text-[#6B7280] text-sm md:text-base leading-relaxed`}
           >
-            No agents, no pressure — just a clear, data-backed picture of where
+            no obligation. no pressure. just clarity, data-backed picture of where
             your home stands today.
           </p>
         </div>

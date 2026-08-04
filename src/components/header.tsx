@@ -3,13 +3,14 @@
 import { useEffect, useRef } from "react";
 import { Playfair_Display } from "next/font/google";
 import gsap from "gsap";
+import Link from "next/link";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 
 export default function Header() {
-  const barRef = useRef<HTMLDivElement>(null);
-  const logoRef = useRef<HTMLDivElement>(null);
-  const infoRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement | null>(null);
+  const logoRef = useRef<HTMLAnchorElement | null>(null);
+  const infoRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -28,7 +29,7 @@ export default function Header() {
     >
       <header className="w-full px-4 md:px-6 xl:px-10 max-w-[1440px] mx-auto flex items-center justify-between">
         {/* Logo */}
-        <div ref={logoRef} className="flex items-center gap-2.5">
+        <Link href={"/"} ref={logoRef} className="flex items-center gap-2.5">
           <div className="relative bg-white rounded-md p-1.5 flex items-center justify-center shadow-[0_0_0_1px_rgba(31,174,159,0.25)]">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B1E33" strokeWidth="2.5">
               <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -38,7 +39,7 @@ export default function Header() {
           <span className={`${playfair.className} text-white text-lg md:text-xl font-semibold tracking-tight`}>
             Listing Signal<sup className="text-[10px] align-super text-[#1FAE9F] ml-0.5">®</sup>
           </span>
-        </div>
+        </Link>
 
         {/* Right side info */}
         <div ref={infoRef} className="flex items-center gap-4 md:gap-6 text-white text-xs">

@@ -43,8 +43,8 @@ export default function Footer() {
       <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[#1FAE9F]/5 rounded-full blur-3xl pointer-events-none -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#1FAE9F]/5 rounded-full blur-3xl pointer-events-none translate-x-1/2 translate-y-1/2" />
 
-      <div className="max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto py-12 md:py-16 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
+      <div className="max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto pt-12 md:pt-16 relative z-10">
+        <div className="flex items-start justify-between">
           {/* Brand + social */}
           <div className="footer-col flex flex-col gap-5">
             <div className="flex items-center gap-2.5">
@@ -81,6 +81,48 @@ export default function Footer() {
             >
               Real-time home value insights, powered by live data and AI.
             </p>
+          </div>
+
+          {/* Data security note */}
+          <div className="flex flex-col gap-[4vh] mb-[4vh]">
+            <div className="footer-col flex flex-col gap-3 md:justify-self-center">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-[#1FAE9F]/10 flex items-center justify-center mt-0.5">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#1FAE9F"
+                    strokeWidth="2"
+                  >
+                    <path
+                      d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M9 12l2 2 4-4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <span
+                    className={`${inter.className} text-white text-sm font-semibold block mb-1`}
+                  >
+                    Your data is secure
+                  </span>
+                  <p
+                    className={`${inter.className} text-white/50 text-xs leading-relaxed`}
+                  >
+                    Bank-level encryption protects your information. We never
+                    sell your data.
+                  </p>
+                </div>
+              </div>
+            </div>
             <div>
               <span
                 className={`${inter.className} text-white/40 text-xs font-medium tracking-wide uppercase mb-3 block`}
@@ -124,50 +166,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Data security note */}
-          <div className="footer-col flex flex-col gap-3 md:justify-self-center">
-            <div className="flex items-start gap-3">
-              <div className="shrink-0 w-10 h-10 rounded-xl bg-[#1FAE9F]/10 flex items-center justify-center mt-0.5">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#1FAE9F"
-                  strokeWidth="2"
-                >
-                  <path
-                    d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M9 12l2 2 4-4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-              <div>
-                <span
-                  className={`${inter.className} text-white text-sm font-semibold block mb-1`}
-                >
-                  Your data is secure
-                </span>
-                <p
-                  className={`${inter.className} text-white/50 text-xs leading-relaxed`}
-                >
-                  Bank-level encryption protects your information. We never sell
-                  your data.
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Email signup */}
-          <div className="footer-col">
+          {/* <div className="footer-col">
             <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
-              {/* Subtle accent */}
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#1FAE9F]/10 rounded-full blur-2xl pointer-events-none translate-x-1/3 -translate-y-1/3" />
 
               <div className="relative z-10 flex flex-col gap-3">
@@ -211,35 +212,15 @@ export default function Footer() {
                 </p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Bottom bar */}
-        <div className="footer-col border-t border-white/[0.06] mt-10 pt-6">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className={`${inter.className} text-white/40 text-xs`}>
+        <div className="footer-col border-t border-white/[0.06] py-[3vh]">
+          <div className="text-center">
+            <p className={`${inter.className} text-white/40 text-sm`}>
               © 2026 Listing Signal. All rights reserved.
             </p>
-            <div className="flex items-center gap-6">
-              <a
-                href="#"
-                className={`${inter.className} text-white/40 text-xs hover:text-[#1FAE9F] transition-colors`}
-              >
-                Privacy
-              </a>
-              <a
-                href="#"
-                className={`${inter.className} text-white/40 text-xs hover:text-[#1FAE9F] transition-colors`}
-              >
-                Terms
-              </a>
-              <a
-                href="#"
-                className={`${inter.className} text-white/40 text-xs hover:text-[#1FAE9F] transition-colors`}
-              >
-                Cookies
-              </a>
-            </div>
           </div>
         </div>
       </div>

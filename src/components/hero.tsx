@@ -1,13 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Playfair_Display, Inter } from "next/font/google";
 import gsap from "gsap";
+import { useGoogleMapsScript } from "@/lib/useGoogleMapsScript";
+import HomeDataLoading from "@/components/loader";
 
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export default function Hero() {
+  const router = useRouter();
+
   const bgRef = useRef<HTMLDivElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
@@ -16,6 +24,100 @@ export default function Hero() {
   const trustRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
+  const addressInputRef = useRef<HTMLInputElement>(null);
+
+  const [address, setAddress] = useState("");
+  const [selectedPlace, setSelectedPlace] = useState<{
+    address: string;
+    lat: number | null;
+    lng: number | null;
+  } | null>(null);
+  const [showValidation, setShowValidation] = useState(false);
+
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+  const mapsLoaded = useGoogleMapsScript(apiKey);
+
+  const [isSearching, setIsSearching] = useState(false);
+  const [pendingParams, setPendingParams] = useState<URLSearchParams | null>(
+    null,
+  );
+
+  const handleSubmit = () => {
+    const trimmed = address.trim();
+
+    // TEMP BYPASS: while waiting on the Google API key, allow submitting
+    // with just the typed text — no dropdown selection required.
+    // Once apiKey is set, selectedPlace will be populated by the
+    // autocomplete listener above and we use that (with lat/lng) instead.
+    if (!trimmed) {
+      setShowValidation(true);
+      return;
+    }
+
+    const place = selectedPlace ?? { address: trimmed, lat: null, lng: null };
+
+    const params = new URLSearchParams({
+      address: place.address,
+      ...(place.lat != null && { lat: String(place.lat) }),
+      ...(place.lng != null && { lng: String(place.lng) }),
+    });
+
+    // Show the loading overlay in place instead of navigating immediately.
+    setPendingParams(params);
+    setIsSearching(true);
+  };
+
+  const handleLoadingComplete = () => {
+    if (pendingParams) {
+      router.push(`/results?${pendingParams.toString()}`);
+    }
+  };
+
+  // Wire up Places Autocomplete once the script has loaded.
+  // TEMP: apiKey is currently empty (waiting on client), so this effect
+  // just no-ops until a real key is added to .env.local — no code changes
+  // needed later, it activates automatically.
+  useEffect(() => {
+    if (!apiKey || !mapsLoaded || !addressInputRef.current) return;
+    if (!window.google?.maps?.places) {
+      console.error(
+        "Google Maps Places library did not load. Check your API key and enabled APIs.",
+      );
+      return;
+    }
+
+    const autocomplete = new google.maps.places.Autocomplete(
+      addressInputRef.current,
+      {
+        types: ["address"],
+        fields: ["formatted_address", "geometry"],
+        // componentRestrictions: { country: "us" }, // uncomment to limit to one country
+      },
+    );
+
+    const listener = autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+      const formatted = place.formatted_address ?? "";
+      const lat = place.geometry?.location?.lat() ?? null;
+      const lng = place.geometry?.location?.lng() ?? null;
+
+      setAddress(formatted);
+      setSelectedPlace({ address: formatted, lat, lng });
+      setShowValidation(false);
+    });
+
+    return () => {
+      google.maps.event.removeListener(listener);
+    };
+  }, [apiKey, mapsLoaded]);
+
+  const handleAddressChange = (value: string) => {
+    setAddress(value);
+    if (selectedPlace && value !== selectedPlace.address) {
+      setSelectedPlace(null);
+    }
+    if (showValidation) setShowValidation(false);
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -31,25 +133,59 @@ export default function Hero() {
 
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      tl.fromTo(bgRef.current, { scale: 1.15 }, { scale: 1, duration: 2.2, ease: "power2.out" }, 0)
-        .fromTo(badgeRef.current, { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.5 }, 0.2)
+      tl.fromTo(
+        bgRef.current,
+        { scale: 1.15 },
+        { scale: 1, duration: 2.2, ease: "power2.out" },
+        0,
+      )
+        .fromTo(
+          badgeRef.current,
+          { opacity: 0, y: -10 },
+          { opacity: 1, y: 0, duration: 0.5 },
+          0.2,
+        )
         .fromTo(
           words ?? [],
           { opacity: 0, y: 24, rotateX: -40 },
           { opacity: 1, y: 0, rotateX: 0, duration: 0.8, stagger: 0.06 },
-          "-=0.15"
+          "-=0.15",
         )
-        .to(path ?? [], { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" }, "-=0.9")
-        .fromTo(subRef.current, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6 }, "-=1.1")
-        .fromTo(searchRef.current, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.65 }, "-=0.4")
-        .fromTo(trustItems ?? [], { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 }, "-=0.3")
+        .to(
+          path ?? [],
+          { strokeDashoffset: 0, duration: 1.4, ease: "power2.inOut" },
+          "-=0.9",
+        )
+        .fromTo(
+          subRef.current,
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.6 },
+          "-=1.1",
+        )
+        .fromTo(
+          searchRef.current,
+          { opacity: 0, y: 16 },
+          { opacity: 1, y: 0, duration: 0.65 },
+          "-=0.4",
+        )
+        .fromTo(
+          trustItems ?? [],
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.1 },
+          "-=0.3",
+        )
         .fromTo(
           ".score-card",
           { opacity: 0, y: 24, scale: 0.94 },
           { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "back.out(1.4)" },
-          "-=0.5"
+          "-=0.5",
         )
-        .fromTo(scrollCueRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 }, "-=0.2");
+        .fromTo(
+          scrollCueRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6 },
+          "-=0.2",
+        );
 
       // gentle looping breathe on the scroll cue
       gsap.to(scrollCueRef.current, {
@@ -70,7 +206,7 @@ export default function Hero() {
       <div
         ref={bgRef}
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/bg.png')" }}
+        style={{ backgroundImage: "url('/bgg.png')" }}
       />
 
       {/* directional overlay: deep navy on the left for copy, lets the photo breathe on the right */}
@@ -106,8 +242,10 @@ export default function Hero() {
               className="inline-flex items-center gap-2 bg-white/[0.06] border border-white/15 rounded-full px-4 py-1.5 mb-6 md:mb-7 backdrop-blur-sm"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F] inline-block shrink-0" />
-              <span className={`${inter.className} text-white/90 text-xs font-medium tracking-wide`}>
-                Trusted by homeowners across Las Vegas
+              <span
+                className={`${inter.className} text-white/90 text-xs font-medium tracking-wide`}
+              >
+                Trusted by homeowners
               </span>
             </div>
 
@@ -135,44 +273,97 @@ export default function Hero() {
               ref={subRef}
               className={`${inter.className} text-white/65 text-base md:text-lg mb-8 md:mb-9 max-w-full md:max-w-[80%] leading-relaxed`}
             >
-              Real-time home value insights — fast, free, and built for today&apos;s market.
+              Real-time home value insights — fast, free, and built for
+              today&apos;s market.
             </p>
 
             {/* Search bar — stacks vertically on mobile so nothing clips */}
-            <div
-              ref={searchRef}
-              className="bg-white rounded-2xl sm:rounded-xl flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-0 p-1.5 max-w-md mb-8 md:mb-9 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-black/[0.03]"
-            >
-              <div className="flex items-center flex-1 min-w-0">
-                <span className="pl-3 sm:pl-4 pr-2 text-[#0B1E33] shrink-0">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" strokeLinecap="round" strokeLinejoin="round" />
+            <div ref={searchRef} className="max-w-md mb-8 md:mb-9">
+              <div className="bg-white rounded-2xl sm:rounded-xl flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 p-1.5 shadow-[0_25px_60px_-20px_rgba(0,0,0,0.6)] ring-1 ring-black/[0.03]">
+                {/* Input track: min-w-0 + overflow-hidden guarantees it shrinks and never paints over the button */}
+                <div className="flex items-center flex-1 min-w-0 overflow-hidden">
+                  <span className="pl-3 sm:pl-4 pr-2 text-[#0B1E33] shrink-0">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path
+                        d="M3 11.5L12 4l9 7.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </span>
+                  <input
+                    ref={addressInputRef}
+                    type="text"
+                    value={address}
+                    onChange={(e) => handleAddressChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSubmit();
+                    }}
+                    placeholder="Enter your home address..."
+                    autoComplete="off"
+                    className={`${inter.className} flex-1 min-w-0 w-full outline-none text-base sm:text-sm text-[#0B1E33] placeholder:text-gray-400 py-2.5 pr-3`}
+                  />
+                </div>
+                <button
+                  onClick={handleSubmit}
+                  className={`${inter.className} relative z-10 bg-[#1FAE9F] hover:bg-[#189184] text-white text-sm font-semibold rounded-full px-5 py-3 sm:py-2.5 flex items-center justify-center gap-1.5 whitespace-nowrap transition-colors w-full sm:w-auto shrink-0`}
+                >
+                  See My Home Value
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <path
+                      d="M5 12h14M13 6l6 6-6 6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
-                </span>
-                <input
-                  type="text"
-                  placeholder="Enter your home address..."
-                  className={`${inter.className} flex-1 min-w-0 outline-none text-base sm:text-sm text-[#0B1E33] placeholder:text-gray-400 py-2.5`}
-                />
+                </button>
               </div>
-              <button
-                className={`${inter.className} bg-[#1FAE9F] hover:bg-[#189184] text-white text-sm font-semibold rounded-full px-5 py-3 sm:py-2.5 flex items-center justify-center gap-1.5 whitespace-nowrap transition-colors w-full sm:w-auto shrink-0`}
-              >
-                See My Home Value
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </button>
+              {showValidation && (
+                <p
+                  className={`${inter.className} text-[#ff9d8a] text-xs mt-2 pl-1`}
+                >
+                  Please enter your home address.
+                </p>
+              )}
             </div>
 
             {/* Trust badges — clean stack on mobile, row from sm up */}
-            <div ref={trustRef} className="flex flex-col sm:flex-row sm:flex-wrap gap-4 sm:gap-x-8 sm:gap-y-4">
+            <div
+              ref={trustRef}
+              className="flex flex-col sm:flex-row sm:flex-wrap gap-4 sm:gap-x-8 sm:gap-y-4"
+            >
               <TrustItem
                 icon={
                   <>
-                    <path d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z" strokeLinecap="round" strokeLinejoin="round" />
-                    <path d="M8.5 12L11 14.5L15.8 9.7" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M8.5 12L11 14.5L15.8 9.7"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </>
                 }
                 title="100% Free"
@@ -182,8 +373,15 @@ export default function Hero() {
                 icon={
                   <>
                     <rect x="4" y="10" width="16" height="11" rx="2" />
-                    <path d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10" strokeLinecap="round" />
-                    <path d="M12 13L13 15L15 16L13 17L12 19L11 17L9 16L11 15L12 13Z" fill="white" stroke="none" />
+                    <path
+                      d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
+                      strokeLinecap="round"
+                    />
+                    <path
+                      d="M12 13L13 15L15 16L13 17L12 19L11 17L9 16L11 15L12 13Z"
+                      fill="white"
+                      stroke="none"
+                    />
                   </>
                 }
                 title="No Commitment"
@@ -194,68 +392,65 @@ export default function Hero() {
                   <>
                     <circle cx="12" cy="13" r="8" />
                     <path d="M12 2V5" strokeLinecap="round" />
-                    <rect x="10" y="1" width="4" height="2" rx="1" fill="#1FAE9F" stroke="none" />
-                    <path d="M13 8L10.5 13H13L11 18L15.5 11H13L15 8H13Z" fill="white" stroke="none" />
+                    <rect
+                      x="10"
+                      y="1"
+                      width="4"
+                      height="2"
+                      rx="1"
+                      fill="#1FAE9F"
+                      stroke="none"
+                    />
+                    <path
+                      d="M13 8L10.5 13H13L11 18L15.5 11H13L15 8H13Z"
+                      fill="white"
+                      stroke="none"
+                    />
                   </>
                 }
                 title="Results in 60 Secs"
                 subtitle="Quick and simple"
               />
             </div>
-
-            {/* Compact Signal Score — mobile only, replaces the desktop glass card */}
-            <div className="score-card lg:hidden mt-8 bg-white/[0.08] border border-white/15 backdrop-blur-md rounded-xl px-4 py-3.5 flex items-center gap-4 max-w-md">
-              <div className="flex items-end gap-1 shrink-0">
-                <span className={`${playfair.className} text-white text-3xl font-semibold leading-none`}>82</span>
-                <span className={`${inter.className} text-white/50 text-[11px] mb-0.5`}>/100</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className={`${inter.className} text-white/60 text-[10px] font-semibold tracking-[0.15em] uppercase`}>
-                    Signal Score
-                  </span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F]" />
-                </div>
-                <div className="h-1 w-full rounded-full bg-white/10 overflow-hidden">
-                  <div className="h-full w-[82%] rounded-full bg-[#1FAE9F]" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: floating signal score glass card (desktop only) */}
-          <div className="hidden lg:flex justify-end">
-            <div className="score-card w-[300px] bg-white/[0.08] border border-white/15 backdrop-blur-md rounded-2xl p-6 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center justify-between mb-5">
-                <span className={`${inter.className} text-white/60 text-[11px] font-semibold tracking-[0.15em] uppercase`}>
-                  Signal Score
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F]" />
-              </div>
-              <div className="flex items-end gap-2 mb-4">
-                <span className={`${playfair.className} text-white text-5xl font-semibold leading-none`}>82</span>
-                <span className={`${inter.className} text-white/50 text-sm mb-1`}>/ 100</span>
-              </div>
-              <div className="h-1.5 w-full rounded-full bg-white/10 mb-4 overflow-hidden">
-                <div className="h-full w-[82%] rounded-full bg-[#1FAE9F]" />
-              </div>
-              <p className={`${inter.className} text-white/60 text-xs leading-relaxed`}>
-                Strong seller conditions in your ZIP right now — demand is outpacing new listings.
-              </p>
-            </div>
           </div>
         </div>
       </div>
 
       {/* scroll cue */}
-      <div ref={scrollCueRef} className="relative z-10 hidden md:flex justify-center pb-8">
+      <div
+        ref={scrollCueRef}
+        className="relative z-10 hidden md:flex justify-center pb-8"
+      >
         <div className="flex flex-col items-center gap-2 text-white/40">
-          <span className={`${inter.className} text-[10px] tracking-[0.2em] uppercase`}>Scroll</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M5 9l7 7 7-7" strokeLinecap="round" strokeLinejoin="round" />
+          <span
+            className={`${inter.className} text-[10px] tracking-[0.2em] uppercase`}
+          >
+            Scroll
+          </span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              d="M5 9l7 7 7-7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
       </div>
+
+      {isSearching && (
+        <HomeDataLoading
+          address={address}
+          duration={4000}
+          onComplete={handleLoadingComplete}
+        />
+      )}
     </section>
   );
 }
@@ -285,8 +480,12 @@ function TrustItem({
         {icon}
       </svg>
       <div className="leading-tight">
-        <div className={`${inter.className} text-white text-sm font-semibold`}>{title}</div>
-        <div className={`${inter.className} text-white/50 text-xs`}>{subtitle}</div>
+        <div className={`${inter.className} text-white text-sm font-semibold`}>
+          {title}
+        </div>
+        <div className={`${inter.className} text-white/50 text-xs`}>
+          {subtitle}
+        </div>
       </div>
     </div>
   );
