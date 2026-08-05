@@ -53,7 +53,7 @@ interface ResultsHeroProps {
 
 export default function ResultsHero({ location = "casc, Las Vegas, NV" }: ResultsHeroProps) {
   return (
-    <section className="relative w-full h-[70vh] bg-[#F3F5F7] px-4 sm:px-6 md:px-10 pt-10 sm:pt-14 pb-8 overflow-hidden">
+    <section className="relative w-full h-[70vh] bg-[#F3F5F7] pt-10 sm:pt-14 pb-8 overflow-hidden">
       {/* Background image + overlay */}
       <div
         className="absolute inset-0 bg-[url('/home/bg1.png')] bg-cover bg-center"
@@ -61,7 +61,7 @@ export default function ResultsHero({ location = "casc, Las Vegas, NV" }: Result
       />
       <div className="absolute inset-0 bg-white/90" aria-hidden="true" />
 
-      <div className="relative z-10 max-w-[1024px] mx-auto flex flex-col items-center text-center">
+      <div className="relative z-10 max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto flex flex-col items-center text-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 bg-[#1FAE9F]/10 rounded-full px-4 py-1.5 mb-5">
           <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F]" aria-hidden="true" />

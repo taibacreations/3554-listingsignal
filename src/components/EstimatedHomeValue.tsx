@@ -23,7 +23,7 @@ export default function EstimatedHomeValue({
   const fillPct = 65;
 
   return (
-    <div className="max-w-[1024px] mx-auto px-4 sm:px-6 -mt-10 sm:-mt-52 relative z-20">
+    <div className="max-w-[1440px] mx-auto px-4 md:px-6 xl:px-10 -mt-10 sm:-mt-52 relative z-20">
       <div className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col md:flex-row">
         {/* Left: value details */}
         <div className="flex-1 p-5 sm:p-7">

@@ -36,6 +36,7 @@ export default function Footer() {
 
   return (
     <footer
+      id="site-footer"
       ref={footerRef}
       className="w-full bg-[#0B1E33] relative overflow-hidden"
     >

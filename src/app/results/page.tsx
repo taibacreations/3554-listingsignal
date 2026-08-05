@@ -153,11 +153,11 @@ export default function ResultsPage() {
   // ORIGINAL SCREEN: Lead Capture Form
   // ==========================================
   return (
-    <div className="relative w-full bg-[#F3F5F7] px-4 sm:px-6 md:px-10 py-12 md:py-20 overflow-hidden min-h-screen">
+    <div className="relative w-full bg-[#F3F5F7] px-4 sm:px-6 md:px-10 overflow-hidden min-h-[90vh] flex justify-center items-center">
       <div className="absolute inset-0 bg-[url('/bg.png')] bg-cover bg-center" />
       <div className="absolute inset-0 bg-white/95" />
 
-      <div className="relative z-10 max-w-4xl mx-auto">
+      <div className="relative z-10 max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
           {/* Left panel */}
           <div
