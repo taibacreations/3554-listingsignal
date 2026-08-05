@@ -663,7 +663,7 @@ export default function Hero() {
           items-center
           px-4
           pb-10
-          pt-24
+          pt-[5vh]
           xs:px-5
           sm:px-6
           sm:pb-11
