@@ -1,18 +1,17 @@
+"use client";
+
 import { Playfair_Display, Inter } from "next/font/google";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
-type Stat = {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-};
-
-const stats: Stat[] = [
+/* ===============================================================
+   STAT DEFINITIONS (values are blurred until unlocked)
+   =============================================================== */
+const stats = [
   {
     label: "EST. VALUE",
-    value: "$509K",
+    value: "$509,000",
     icon: (
       <>
         <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -25,9 +24,9 @@ const stats: Stat[] = [
     value: "25/100",
     icon: (
       <>
-        <rect x="4" y="14" width="3" height="6" />
-        <rect x="10.5" y="10" width="3" height="10" />
-        <rect x="17" y="6" width="3" height="14" />
+        <rect x="4" y="14" width="3" height="6" rx="0.5" />
+        <rect x="10.5" y="10" width="3" height="10" rx="0.5" />
+        <rect x="17" y="6" width="3" height="14" rx="0.5" />
       </>
     ),
   },
@@ -35,103 +34,99 @@ const stats: Stat[] = [
     label: "CONFIDENCE",
     value: "97.5%",
     icon: (
-      <>
-        <path
-          d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path d="M8.5 12L11 14.5L15.8 9.7" strokeLinecap="round" strokeLinejoin="round" />
-      </>
+      <path
+        d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     ),
   },
 ];
 
 interface ResultsHeroProps {
   location?: string;
+  salesCount?: number;
+  /** When true the stat values render blurred (like the mockup) */
+  locked?: boolean;
 }
 
-export default function ResultsHero({ location = "casc, Las Vegas, NV" }: ResultsHeroProps) {
+export default function ResultsHero({
+  location = "casc, Las Vegas, NV",
+  salesCount = 4,
+  locked = true,
+}: ResultsHeroProps) {
   return (
-    <section className="relative w-full h-[70vh] bg-[#F3F5F7] pt-10 sm:pt-14 pb-8 overflow-hidden">
-      {/* Background image + overlay */}
-      <div
-        className="absolute inset-0 bg-[url('/home/bg1.png')] bg-cover bg-center"
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-white/90" aria-hidden="true" />
-
-      <div className="relative z-10 max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto flex flex-col items-center text-center">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-[#1FAE9F]/10 rounded-full px-4 py-1.5 mb-5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F]" aria-hidden="true" />
+    <section className="relative z-10 pt-10 sm:pt-14">
+      <div className="mx-auto flex w-full max-w-[1440px] px-4 md:px-6 xl:px-10 flex-col items-center text-center">
+        {/* ========================================================
+            BADGE
+            ======================================================== */}
+        <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#1FAE9F]/10 px-4 py-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#1FAE9F]" aria-hidden="true" />
           <span
-            className={`${inter.className} text-[#1FAE9F] text-xs font-semibold tracking-wide uppercase`}
+            className={`${inter.className} text-[11px] font-semibold uppercase tracking-[0.14em] text-[#178F82]`}
           >
             Your Home Value Is Ready
           </span>
         </div>
 
-        {/* Heading */}
+        {/* ========================================================
+            HEADLINE
+            ======================================================== */}
         <h1
-          className={`${playfair.className} text-[#0B1E33] text-2xl sm:text-3xl md:text-4xl font-semibold leading-tight px-2`}
+          className={`${playfair.className} px-2 text-[30px] font-semibold leading-[1.15] text-[#0B1E33] sm:text-[38px] md:text-[44px]`}
         >
-          We found 4 recent sales <span className="text-[#1FAE9F]">near your home.</span>
+          We found {salesCount} recent sales
+          <br className="hidden sm:block" /> near{" "}
+          <span className="text-[#1FAE9F]">your home</span>.
         </h1>
-        <p className={`${inter.className} text-[#0B1E33]/60 text-sm mt-3 max-w-md px-2`}>
+
+        <p className={`${inter.className} mt-3 max-w-md px-2 text-sm text-[#0B1E33]/60`}>
           Enter your details to see what your home could sell for right now.
         </p>
 
-        {/* Stat cards */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-4 mt-8 w-full max-w-lg">
+        {/* ========================================================
+            STAT CARDS (blurred values)
+            ======================================================== */}
+        <div className="mt-8 grid w-full max-w-[700px] grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {stats.map((s) => (
             <div
               key={s.label}
-              className="bg-white rounded-2xl shadow-sm px-3 sm:px-4 py-4 sm:py-5 flex flex-col items-center gap-2"
+              className="flex items-center gap-3.5 rounded-2xl bg-white px-5 py-4 shadow-[0_15px_35px_-18px_rgba(11,30,51,0.25)] ring-1 ring-[#0B1E33]/[0.04]"
             >
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-[#1FAE9F] flex items-center justify-center shrink-0">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#1FAE9F"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#1FAE9F]/35 bg-[#1FAE9F]/[0.04] text-[#1FAE9F]">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
                   {s.icon}
                 </svg>
               </div>
-              <span
-                className={`${inter.className} text-[#0B1E33] text-sm sm:text-base font-semibold`}
-              >
-                {s.value}
-              </span>
-              <span className={`${inter.className} text-[#0B1E33]/40 text-[10px] tracking-wide`}>
-                {s.label}
-              </span>
+
+              <div className="min-w-0 text-left">
+                {/* Value — blurred while locked */}
+                <div
+                  className={`${inter.className} truncate text-[15px] font-bold text-[#0B1E33]/80 ${
+                    locked ? "select-none blur-[6px]" : ""
+                  }`}
+                  aria-hidden={locked}
+                >
+                  {s.value}
+                </div>
+                <div className={`${inter.className} mt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0B1E33]/45`}>
+                  {s.label}
+                </div>
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Location pill */}
-        <div className="bg-[#0B1E33] rounded-full inline-flex items-center gap-2 px-4 py-2 mt-6 shadow-sm max-w-full">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#1FAE9F"
-            strokeWidth="2"
-            className="shrink-0"
-            aria-hidden="true"
-          >
-            <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" strokeLinecap="round" strokeLinejoin="round" />
+        {/* ========================================================
+            LOCATION PILL
+            ======================================================== */}
+        <div className="mb-2 mt-7 inline-flex max-w-full items-center gap-2 rounded-full bg-[#0B1E33] px-5 py-2.5 shadow-[0_14px_30px_-14px_rgba(11,30,51,0.55)]">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8" className="shrink-0" aria-hidden="true">
+            <path d="M12 21s-7-5.8-7-11a7 7 0 1114 0c0 5.2-7 11-7 11z" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="12" cy="10" r="2.5" />
           </svg>
-          <span className={`${inter.className} text-white text-sm font-medium truncate`}>
-            {location}
-          </span>
+          <span className={`${inter.className} truncate text-sm font-medium text-white`}>{location}</span>
         </div>
       </div>
     </section>

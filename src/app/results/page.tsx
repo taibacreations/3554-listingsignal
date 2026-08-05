@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Playfair_Display, Inter } from "next/font/google";
 
-// 1. Import your new screen components
+// 1. Import your screen components
 import ResultsHero from "@/components/ResultsHero";
 import EstimatedHomeValue from "@/components/EstimatedHomeValue";
-import SignalToSell from"@/components/SignalToTell";
+import SignalToSell from "@/components/SignalToTell"
 import YourProperty from "@/components/YourProperty";
-import CtaBanner from "@/components/CtaBanner"
+import CtaBanner from "@/components/CtaBanner";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -80,7 +80,7 @@ export default function ResultsPage() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // State to toggle between the Form and the Report Screen
   const [showReport, setShowReport] = useState(false);
 
@@ -120,12 +120,11 @@ export default function ResultsPage() {
 
       // Trigger the new screen instead of navigating to a new route
       setShowReport(true);
-      
+
       // Smoothly scroll to the top so the user sees the ResultsHero first
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }, 100);
-
     } catch (error) {
       console.error("Submission failed:", error);
     } finally {
@@ -138,12 +137,37 @@ export default function ResultsPage() {
   // ==========================================
   if (showReport) {
     return (
-      <main className="bg-[#F3F5F7] min-h-screen flex flex-col">
-        <ResultsHero location={address || "Your Neighborhood"} />
-        <EstimatedHomeValue />
+      <main className="min-h-screen bg-[#F3F5F7]">
+        {/* ================================================
+            SHARED BACKGROUND WRAPPER
+            The house photo flows behind the hero + value card,
+            then fades into the page bg — exactly like the mockup.
+            ================================================ */}
+        <div className="relative overflow-hidden">
+          {/* house photo */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: "url('/bgg.png')" }}
+            aria-hidden="true"
+          />
+          {/* vertical fade into page bg */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(243,245,247,0.55)_0%,rgba(243,245,247,0.25)_30%,rgba(243,245,247,0.6)_72%,#F3F5F7_100%)]"
+            aria-hidden="true"
+          />
+          {/* soft white glow behind the headline */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_48%_at_50%_16%,rgba(243,245,247,0.92)_0%,rgba(243,245,247,0.5)_55%,rgba(243,245,247,0)_100%)]"
+            aria-hidden="true"
+          />
+
+          <ResultsHero location={address || "casc, Las Vegas, NV"} />
+          <EstimatedHomeValue />
+        </div>
+
+        {/* Everything below sits on the plain page bg */}
         <SignalToSell />
-        {/* Note: passing /bgg.png since /home/bg.png doesn't exist in your public folder */}
-        <YourProperty imageSrc="/bgg.png" /> 
+        <YourProperty imageSrc="/bgg.png" />
         <CtaBanner />
       </main>
     );
@@ -153,11 +177,11 @@ export default function ResultsPage() {
   // ORIGINAL SCREEN: Lead Capture Form
   // ==========================================
   return (
-    <div className="relative w-full bg-[#F3F5F7] px-4 sm:px-6 md:px-10 overflow-hidden min-h-[90vh] flex justify-center items-center">
+    <div className="relative w-full bg-[#F3F5F7] overflow-hidden min-h-[90vh] flex justify-center items-center md:py-0 py-[10vh]">
       <div className="absolute inset-0 bg-[url('/bg.png')] bg-cover bg-center" />
       <div className="absolute inset-0 bg-white/95" />
 
-      <div className="relative z-10 max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto">
+      <div className="relative z-10 max-w-[1200px] px-4 md:px-6 xl:px-10 mx-auto">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
           {/* Left panel */}
           <div
@@ -276,7 +300,9 @@ export default function ResultsPage() {
                   errors.email ? "border-[#E85D75]" : "border-[#0B1E33]/10"
                 }`}
               />
-              {errors.email && <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.email}</p>}
+              {errors.email && (
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.email}</p>
+              )}
               {!errors.email && <div className="mb-4" />}
 
               <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
@@ -291,7 +317,9 @@ export default function ResultsPage() {
                   errors.phone ? "border-[#E85D75]" : "border-[#0B1E33]/10"
                 }`}
               />
-              {errors.phone && <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.phone}</p>}
+              {errors.phone && (
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.phone}</p>
+              )}
               {!errors.phone && <div className="mb-6" />}
 
               <button

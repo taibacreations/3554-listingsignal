@@ -1,9 +1,9 @@
-// YourProperty.tsx
-import { Inter, Playfair_Display } from "next/font/google";
+"use client";
+
+import { Inter } from "next/font/google";
 import Image from "next/image";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 
 interface PropertyDetail {
   label: string;
@@ -12,11 +12,11 @@ interface PropertyDetail {
 }
 
 interface YourPropertyProps {
-  bedrooms: number;
-  bathrooms: number;
-  sqft: number;
-  yearBuilt: number;
-  imageSrc: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  sqft?: number;
+  yearBuilt?: number;
+  imageSrc?: string;
 }
 
 export default function YourProperty({
@@ -24,7 +24,7 @@ export default function YourProperty({
   bathrooms = 3,
   sqft = 2110,
   yearBuilt = 2014,
-  imageSrc = "/home/bg.png",
+  imageSrc = "/bgg.png",
 }: Partial<YourPropertyProps>) {
   const details: PropertyDetail[] = [
     {
@@ -32,9 +32,9 @@ export default function YourProperty({
       value: bedrooms,
       icon: (
         <>
-          <path d="M3 18v-6a2 2 0 012-2h14a2 2 0 012 2v6" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 18v2M21 18v2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M5 10V7a2 2 0 012-2h2a2 2 0 012 2v3" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M3 18v-5a2 2 0 012-2h14a2 2 0 012 2v5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M3 18h18M3 18v2M21 18v2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M5 11V7a2 2 0 012-2h3a2 2 0 012 2v4" strokeLinecap="round" strokeLinejoin="round" />
         </>
       ),
     },
@@ -43,8 +43,9 @@ export default function YourProperty({
       value: bathrooms,
       icon: (
         <>
-          <path d="M4 12h16v3a4 4 0 01-4 4H8a4 4 0 01-4-4v-3z" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M6 12V6a2 2 0 012-2h1" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 12h16v2a5 5 0 01-5 5H9a5 5 0 01-5-5v-2z" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M6 12V5a2 2 0 012-2h1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M7 19.5L6 21.5M17 19.5l1 2" strokeLinecap="round" />
         </>
       ),
     },
@@ -53,8 +54,8 @@ export default function YourProperty({
       value: `${sqft.toLocaleString()} sq ft`,
       icon: (
         <>
-          <rect x="3" y="3" width="18" height="18" rx="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 9h18M9 21V9" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="3.5" y="3.5" width="17" height="17" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M3.5 9.5h17M9.5 20.5v-11" strokeLinecap="round" strokeLinejoin="round" />
         </>
       ),
     },
@@ -63,64 +64,50 @@ export default function YourProperty({
       value: yearBuilt,
       icon: (
         <>
-          <rect x="3" y="5" width="18" height="16" rx="2" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M3 10h18M8 3v4M16 3v4" strokeLinecap="round" strokeLinejoin="round" />
+          <rect x="3.5" y="5" width="17" height="16" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M3.5 10h17M8 3v4M16 3v4" strokeLinecap="round" strokeLinejoin="round" />
         </>
       ),
     },
   ];
 
   return (
-    <section className="max-w-[1100px] mx-auto px-4 sm:px-6 mt-8 md:mt-10">
-      <div className="bg-white rounded-2xl border border-[#0B1E33]/[0.07] shadow-[0_30px_70px_-40px_rgba(11,30,51,0.35)] p-6 sm:p-9">
-        <div className="flex items-center gap-2.5 mb-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F] shrink-0" />
-          <span className={`${inter.className} text-[#0B1E33]/50 text-[11px] font-bold tracking-[0.2em] uppercase`}>
+    <section className="mx-auto mt-8 w-full max-w-[1200px] px-4 pb-4 md:px-6 xl:px-10 md:mt-10">
+      <div className="rounded-2xl bg-white p-6 shadow-[0_30px_70px_-40px_rgba(11,30,51,0.35)] ring-1 ring-[#0B1E33]/[0.06] sm:p-8">
+        {/* ========================================================
+            HEADER
+            ======================================================== */}
+        <div className="mb-6 border-b border-[#0B1E33]/[0.06] pb-4">
+          <span className={`${inter.className} text-xs font-semibold uppercase tracking-[0.14em] text-[#0B1E33]/50`}>
             Your Property
           </span>
         </div>
-        <h3 className={`${playfair.className} text-[#0B1E33] text-xl sm:text-2xl font-semibold mt-2 mb-7`}>
-          Property Snapshot
-        </h3>
 
-        <div className="grid grid-cols-1 md:grid-cols-[1.1fr_1fr] gap-8 md:gap-10 items-stretch">
-          {/* Details list */}
-          <ul className="divide-y divide-[#0B1E33]/[0.06] self-center">
+        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1.05fr_1fr] md:gap-10">
+          {/* ======================================================
+              DETAILS LIST
+              ====================================================== */}
+          <ul className="divide-y divide-[#0B1E33]/[0.06]">
             {details.map((d) => (
-              <li key={d.label} className="flex items-center justify-between gap-4 py-4">
-                <span className={`${inter.className} text-[#0B1E33]/60 text-sm inline-flex items-center gap-3.5 min-w-0`}>
-                  <span className="w-9 h-9 rounded-full bg-[#1FAE9F]/10 flex items-center justify-center shrink-0">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#1FAE9F"
-                      strokeWidth="2"
-                      aria-hidden="true"
-                    >
-                      {d.icon}
-                    </svg>
-                  </span>
-                  <span className="whitespace-nowrap">{d.label}</span>
+              <li key={d.label} className="flex items-center justify-between gap-4 py-[15px] first:pt-1 last:pb-1">
+                <span className={`${inter.className} inline-flex min-w-0 items-center gap-3 text-sm text-[#0B1E33]/60`}>
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="1.8" className="shrink-0" aria-hidden="true">
+                    {d.icon}
+                  </svg>
+                  {d.label}
                 </span>
-                <span className={`${playfair.className} text-[#0B1E33] text-[15px] sm:text-base font-semibold whitespace-nowrap shrink-0`}>
+                <span className={`${inter.className} shrink-0 whitespace-nowrap text-sm font-bold text-[#0B1E33]`}>
                   {d.value}
                 </span>
               </li>
             ))}
           </ul>
 
-          {/* Property image */}
-          <div className="relative w-full min-h-[220px] md:min-h-full rounded-xl overflow-hidden ring-1 ring-[#0B1E33]/[0.06] shadow-[0_20px_45px_-20px_rgba(11,30,51,0.4)]">
+          {/* ======================================================
+              PROPERTY IMAGE
+              ====================================================== */}
+          <div className="relative h-[220px] w-full overflow-hidden rounded-xl ring-1 ring-[#0B1E33]/[0.06] sm:h-[250px] md:h-full md:min-h-[250px]">
             <Image src={imageSrc} alt="Exterior view of the property" fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B1E33]/55 via-transparent to-transparent" />
-            <div className="absolute bottom-3.5 left-3.5 inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F]" />
-              <span className={`${inter.className} text-[#0B1E33] text-[11px] font-semibold whitespace-nowrap`}>
-                Live Property View
-              </span>
-            </div>
           </div>
         </div>
       </div>

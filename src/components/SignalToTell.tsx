@@ -1,19 +1,21 @@
-// SignalToSell.tsx
-import { Inter, Playfair_Display } from "next/font/google";
+"use client";
+
+import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 
 interface SignalToSellProps {
-  score: number; // 0-100
+  score?: number; // 0-100
   badgeLabel?: string;
   message?: string;
 }
 
 function scoreTier(score: number) {
-  if (score < 60) return { label: "Opportunity", color: "#F97316", bg: "#FDEEE3", border: "#F9731633" };
-  if (score < 80) return { label: "Steady", color: "#0B1E33", bg: "#EEF0F3", border: "#0B1E3320" };
-  return { label: "Strong", color: "#1FAE9F", bg: "#EAF4F2", border: "#1FAE9F33" };
+  if (score < 60)
+    return { label: "Opportunity", color: "#F27A0F", bg: "#FDF0E3", border: "#F27A0F2E" };
+  if (score < 80)
+    return { label: "Steady", color: "#5B6B7C", bg: "#EEF1F4", border: "#0B1E3320" };
+  return { label: "Strong", color: "#1FAE9F", bg: "#EAF6F4", border: "#1FAE9F33" };
 }
 
 export default function SignalToSell({
@@ -25,80 +27,83 @@ export default function SignalToSell({
   const fillPct = Math.min(Math.max(score, 0), 100);
 
   return (
-    <section className="max-w-[1100px] mx-auto px-4 sm:px-6 mt-8 md:mt-10">
-      <div className="bg-white rounded-2xl border border-[#0B1E33]/[0.07] shadow-[0_30px_70px_-40px_rgba(11,30,51,0.35)] p-6 sm:p-9">
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-          <div className="flex items-center gap-2.5">
-            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: tier.color }} />
-            <span
-              className={`${inter.className} text-[11px] font-bold tracking-[0.2em] uppercase`}
-              style={{ color: tier.color }}
-            >
-              Signal to Sell™
-            </span>
-          </div>
+    <section className="mx-auto w-full max-w-[1200px] px-4 pb-4 md:px-6 xl:px-10">
+      <div className="rounded-2xl bg-white p-6 shadow-[0_30px_70px_-40px_rgba(11,30,51,0.35)] ring-1 ring-[#0B1E33]/[0.06] sm:p-8">
+        {/* ========================================================
+            HEADER ROW
+            ======================================================== */}
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b border-[#0B1E33]/[0.06] pb-4">
           <span
-            className={`${inter.className} text-xs font-semibold rounded-full px-4 py-1.5`}
+            className={`${inter.className} text-[11px] font-bold uppercase tracking-[0.18em]`}
+            style={{ color: tier.color }}
+          >
+            Signal to Sell™
+          </span>
+          <span
+            className={`${inter.className} rounded-full px-3.5 py-1 text-xs font-semibold`}
             style={{ color: tier.color, backgroundColor: `${tier.color}1A` }}
           >
             {badgeLabel}
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-[0.95fr_1.15fr] gap-8 md:gap-10 items-center">
-          {/* Score + bar */}
+        <div className="grid grid-cols-1 items-center gap-9 md:grid-cols-[0.95fr_1.15fr] md:gap-10">
+          {/* ======================================================
+              SCORE + BAR
+              ====================================================== */}
           <div>
-            <div className="flex items-end gap-2.5">
-              <p className={`${playfair.className} text-[#0B1E33] text-[56px] sm:text-6xl font-bold leading-none`}>
+            <div className="flex items-end gap-2">
+              <p className={`${inter.className} text-[52px] font-bold leading-none tracking-tight text-[#0B1E33] sm:text-[60px]`}>
                 {score}
               </p>
-              <span className={`${inter.className} text-[#0B1E33]/35 text-lg font-medium mb-1.5`}>/100</span>
+              <span className={`${inter.className} mb-1 text-lg font-medium text-[#0B1E33]/35`}>/100</span>
             </div>
 
-            <div className="h-2.5 w-full rounded-full bg-[#E7EAEE] overflow-visible mt-6 relative">
+            <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-[#E7EAEE]">
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{ width: `${fillPct}%`, backgroundColor: tier.color }}
               />
-              <div
-                className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-[3px] shadow-md"
-                style={{ left: `calc(${fillPct}% - 8px)`, borderColor: tier.color }}
-              />
             </div>
 
-            <div className="flex items-center justify-between mt-5 flex-wrap gap-y-1.5">
-              <span className={`${inter.className} text-[#F97316] text-[11px] font-semibold`}>
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <span className={`${inter.className} text-[11px] font-semibold text-[#F27A0F]`}>
                 Opportunity 0–59
               </span>
-              <span className={`${inter.className} text-[#0B1E33]/40 text-[11px] font-semibold`}>
+              <span className={`${inter.className} text-[11px] font-semibold text-[#0B1E33]/40`}>
                 Steady 60–79
               </span>
-              <span className={`${inter.className} text-[#1FAE9F] text-[11px] font-semibold`}>
+              <span className={`${inter.className} text-[11px] font-semibold text-[#1FAE9F]`}>
                 Strong 80–100
               </span>
             </div>
           </div>
 
-          {/* Explanation card */}
+          {/* ======================================================
+              EXPLANATION CARD
+              ====================================================== */}
           <div
-            className="rounded-xl p-5 sm:p-6 flex gap-4 border"
+            className="flex gap-4 rounded-xl border p-5 sm:p-6"
             style={{ backgroundColor: tier.bg, borderColor: tier.border }}
           >
             <div
-              className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
-              style={{ backgroundColor: tier.color, boxShadow: `0 0 0 5px ${tier.color}1A` }}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full"
+              style={{
+                backgroundColor: tier.color,
+                boxShadow: `0 0 0 5px ${tier.color}1F, 0 10px 20px -8px ${tier.color}B3`,
+              }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.4" aria-hidden="true">
                 <path d="M3 17l6-6 4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M14 7h7v7" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
+
             <div>
-              <p className={`${inter.className} text-[#0B1E33] text-sm font-semibold mb-1.5`}>
+              <p className={`${inter.className} mb-1.5 text-sm font-bold text-[#0B1E33]`}>
                 What this means for you
               </p>
-              <p className={`${inter.className} text-[#0B1E33]/60 text-sm leading-relaxed`}>
+              <p className={`${inter.className} text-[13.5px] leading-relaxed text-[#0B1E33]/60`}>
                 {message}
               </p>
             </div>

@@ -125,22 +125,6 @@ export default function HomeDataLoading({
     };
   }, []);
 
-  // Measure footer height so the overlay sits above it (footer stays visible)
-  useEffect(() => {
-    const measureFooter = () => {
-      const footer = document.getElementById("site-footer");
-      if (footer) setFooterHeight(footer.getBoundingClientRect().height);
-    };
-
-    measureFooter();
-    const settleTimer = setTimeout(measureFooter, 100);
-    window.addEventListener("resize", measureFooter);
-    return () => {
-      clearTimeout(settleTimer);
-      window.removeEventListener("resize", measureFooter);
-    };
-  }, []);
-
   useEffect(() => {
     const stepDuration = duration / stepDefs.length;
     const timers: ReturnType<typeof setTimeout>[] = [];
