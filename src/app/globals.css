@@ -35,3 +35,299 @@ a, button {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+
+
+
+/* ============================================================
+   GOOGLE PLACES AUTOCOMPLETE
+   Premium navy / teal / gold styling
+   ============================================================ */
+
+.pac-container {
+  z-index: 999999 !important;
+  box-sizing: border-box !important;
+  padding: 8px !important;
+
+  border: 1px solid rgba(201, 169, 110, 0.18) !important;
+  border-radius: 18px !important;
+
+  background: linear-gradient(
+    160deg,
+    rgba(18, 44, 68, 0.99),
+    rgba(8, 26, 45, 0.99)
+  ) !important;
+
+  box-shadow:
+    0 34px 80px -22px rgba(0, 0, 0, 0.85),
+    0 0 0 1px rgba(31, 174, 159, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif !important;
+
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 169, 110, 0.4) transparent;
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+.pac-container::-webkit-scrollbar {
+  width: 5px !important;
+}
+
+.pac-container::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.pac-container::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 110, 0.38) !important;
+  border-radius: 999px !important;
+}
+
+
+/* ============================================================
+   GOOGLE PLACE ITEM
+   ============================================================ */
+
+.pac-item {
+  box-sizing: border-box !important;
+
+  display: flex !important;
+  align-items: center !important;
+
+  min-height: 56px !important;
+
+  margin: 2px 0 !important;
+  padding: 10px 12px !important;
+
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+
+  background: transparent !important;
+
+  cursor: pointer !important;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif !important;
+
+  text-align: left !important;
+
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease !important;
+}
+
+
+/* ============================================================
+   ITEM DIVIDERS
+   ============================================================ */
+
+.pac-item + .pac-item {
+  border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+
+/* ============================================================
+   HOVER / SELECTED
+   ============================================================ */
+
+.pac-item:hover,
+.pac-item-selected {
+  background: linear-gradient(
+    90deg,
+    rgba(31, 174, 159, 0.14),
+    rgba(201, 169, 110, 0.08)
+  ) !important;
+
+  border-color: rgba(201, 169, 110, 0.22) !important;
+}
+
+.pac-item:hover {
+  transform: translateX(2px);
+}
+
+
+/* ============================================================
+   LOCATION ICON
+   ============================================================ */
+
+.pac-icon {
+  flex: 0 0 auto !important;
+
+  width: 17px !important;
+  height: 17px !important;
+
+  margin-right: 11px !important;
+
+  opacity: 0.9 !important;
+
+  filter:
+    invert(74%)
+    sepia(28%)
+    saturate(500%)
+    hue-rotate(6deg)
+    brightness(96%)
+    contrast(92%) !important;
+}
+
+
+/* ============================================================
+   PRIMARY ADDRESS
+   ============================================================ */
+
+.pac-item-query {
+  flex: 0 0 auto !important;
+
+  max-width: 68% !important;
+
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+
+  color: #ffffff !important;
+
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+
+  letter-spacing: -0.005em !important;
+}
+
+
+/* ============================================================
+   MATCHED SEARCH TEXT
+   ============================================================ */
+
+.pac-matched {
+  color: #1fae9f !important;
+  font-weight: 700 !important;
+}
+
+
+/* ============================================================
+   SECONDARY ADDRESS
+   ============================================================ */
+
+.pac-item span:not(.pac-item-query):not(.pac-matched) {
+  color: rgba(255, 255, 255, 0.5) !important;
+
+  font-size: 11.5px !important;
+  line-height: 1.4 !important;
+}
+
+
+/* ============================================================
+   SECONDARY ADDRESS LAYOUT
+   ============================================================ */
+
+.pac-item > span:not(.pac-item-query):not(.pac-icon) {
+  flex: 1 1 auto !important;
+
+  min-width: 0 !important;
+
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+
+  margin-left: 7px !important;
+}
+
+
+/* ============================================================
+   GOOGLE LOGO
+   ============================================================ */
+
+.pac-logo:after {
+  display: block !important;
+
+  margin: 8px 4px 3px !important;
+
+  opacity: 0.3 !important;
+
+  filter: grayscale(1) brightness(1.6) !important;
+}
+
+
+/* ============================================================
+   SELECTED QUERY
+   ============================================================ */
+
+.pac-item-selected .pac-item-query {
+  color: #ffffff !important;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 639px) {
+  .pac-container {
+    padding: 6px !important;
+    border-radius: 14px !important;
+  }
+
+  .pac-item {
+    min-height: 46px !important;
+    padding: 8px 9px !important;
+    border-radius: 10px !important;
+  }
+
+  .pac-item-query {
+    font-size: 12px !important;
+  }
+
+  .pac-item span:not(.pac-item-query):not(.pac-matched) {
+    font-size: 10px !important;
+  }
+
+  .pac-icon {
+    width: 15px !important;
+    height: 15px !important;
+    margin-right: 8px !important;
+  }
+}
+
+
+/* ============================================================
+   VERY SMALL DEVICES
+   ============================================================ */
+
+@media (max-width: 374px) {
+  .pac-item {
+    min-height: 42px !important;
+    padding: 7px 8px !important;
+  }
+
+  .pac-item-query {
+    max-width: 62% !important;
+    font-size: 11.5px !important;
+  }
+
+  .pac-item span:not(.pac-item-query):not(.pac-matched) {
+    font-size: 9.5px !important;
+  }
+}
