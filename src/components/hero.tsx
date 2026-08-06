@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Playfair_Display, Inter } from "next/font/google";
 import gsap from "gsap";
+
 import { useGoogleMapsScript } from "@/lib/useGoogleMapsScript";
 import HomeDataLoading from "@/components/loader";
 
@@ -35,37 +36,173 @@ export default function Hero() {
   const trustRef = useRef<HTMLDivElement | null>(null);
   const pathRef = useRef<SVGPathElement | null>(null);
   const scrollCueRef = useRef<HTMLDivElement | null>(null);
-
   const addressInputRef = useRef<HTMLInputElement | null>(null);
 
-  const autocompleteContainerRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const placeAutocompleteRef =
-    useRef<HTMLElement | null>(null);
-
   const [address, setAddress] = useState("");
-
   const [selectedPlace, setSelectedPlace] =
     useState<SelectedPlace | null>(null);
 
-  const [showValidation, setShowValidation] =
-    useState(false);
-
-  const [isSearching, setIsSearching] =
-    useState(false);
-
+  const [showValidation, setShowValidation] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [pendingParams, setPendingParams] =
     useState<URLSearchParams | null>(null);
 
-  const apiKey =
-    process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
   const mapsLoaded = useGoogleMapsScript(apiKey);
 
   /* ============================================================
+     GOOGLE PLACES DROPDOWN POSITION
+     ============================================================ */
+
+  const positionPlacesDropdown = () => {
+    const hero = heroRef.current;
+    const search = searchRef.current;
+    const input = addressInputRef.current;
+
+    if (!hero || !search || !input) return;
+
+    const pac = document.querySelector(
+      ".pac-container",
+    ) as HTMLElement | null;
+
+    if (!pac) return;
+
+    const heroRect = hero.getBoundingClientRect();
+    const searchRect = search.getBoundingClientRect();
+    const inputRect = input.getBoundingClientRect();
+
+    const scrollY =
+      window.scrollY || document.documentElement.scrollTop;
+
+    const scrollX =
+      window.scrollX || document.documentElement.scrollLeft;
+
+    const viewportWidth = window.innerWidth;
+
+    const pageHeroTop = heroRect.top + scrollY;
+    const pageHeroBottom = heroRect.bottom + scrollY;
+
+    const desiredWidth = Math.min(
+      searchRect.width,
+      viewportWidth - 24,
+    );
+
+    const desiredLeft =
+      searchRect.left +
+      scrollX +
+      (searchRect.width - desiredWidth) / 2;
+
+    const gap = 10;
+
+    const belowTop = inputRect.bottom + scrollY + gap;
+
+    const spaceBelow =
+      pageHeroBottom - belowTop - 12;
+
+    const spaceAbove =
+      inputRect.top + scrollY - pageHeroTop - 12;
+
+    const preferredHeight = 290;
+
+    let dropdownTop = belowTop;
+
+    let maxHeight = Math.min(
+      preferredHeight,
+      Math.max(120, spaceBelow),
+    );
+
+    /* Place above when there isn't enough room below */
+
+    if (spaceBelow < 150 && spaceAbove > spaceBelow) {
+      maxHeight = Math.min(
+        preferredHeight,
+        Math.max(120, spaceAbove),
+      );
+
+      dropdownTop =
+        inputRect.top +
+        scrollY -
+        maxHeight -
+        gap;
+    }
+
+    /* Keep dropdown inside hero */
+
+    const minimumTop = pageHeroTop + 12;
+
+    if (dropdownTop < minimumTop) {
+      dropdownTop = minimumTop;
+    }
+
+    const maximumBottom = pageHeroBottom - 12;
+
+    if (dropdownTop + maxHeight > maximumBottom) {
+      maxHeight = Math.max(
+        120,
+        maximumBottom - dropdownTop,
+      );
+    }
+
+    const computedPosition =
+      window.getComputedStyle(pac).position;
+
+    if (computedPosition === "fixed") {
+      dropdownTop -= scrollY;
+    }
+
+    pac.style.setProperty(
+      "left",
+      `${desiredLeft}px`,
+      "important",
+    );
+
+    pac.style.setProperty(
+      "top",
+      `${dropdownTop}px`,
+      "important",
+    );
+
+    pac.style.setProperty(
+      "width",
+      `${desiredWidth}px`,
+      "important",
+    );
+
+    pac.style.setProperty(
+      "max-height",
+      `${maxHeight}px`,
+      "important",
+    );
+
+    pac.style.setProperty(
+      "overflow-y",
+      "auto",
+      "important",
+    );
+
+    pac.style.setProperty(
+      "overflow-x",
+      "hidden",
+      "important",
+    );
+
+    pac.style.setProperty(
+      "box-sizing",
+      "border-box",
+      "important",
+    );
+
+    pac.style.setProperty(
+      "z-index",
+      "999999",
+      "important",
+    );
+  };
+
+  /* ============================================================
      SUBMIT
-  ============================================================ */
+     ============================================================ */
 
   const handleSubmit = () => {
     const trimmed = address.trim();
@@ -99,141 +236,59 @@ export default function Hero() {
     if (!pendingParams) return;
 
     router.push(
-      `/results?${pendingParams.toString()}`
+      `/results?${pendingParams.toString()}`,
     );
   };
 
   /* ============================================================
      GOOGLE PLACES AUTOCOMPLETE
-  ============================================================ */
+     ============================================================ */
 
   useEffect(() => {
     if (
       !apiKey ||
       !mapsLoaded ||
-      !autocompleteContainerRef.current
+      !addressInputRef.current
     ) {
       return;
     }
 
-    const places = window.google?.maps?.places;
-
-    if (!places) {
-      console.warn(
-        "Google Maps Places library is not available."
+    if (!window.google?.maps?.places) {
+      console.error(
+        "Google Maps Places library is not available. Make sure the Places library is loaded.",
       );
+
       return;
     }
 
-    /* ============================================================
-       NEW PLACE AUTOCOMPLETE ELEMENT
-    ============================================================ */
+    const input = addressInputRef.current;
 
-    if (places.PlaceAutocompleteElement) {
-      const autocompleteEl =
-        new places.PlaceAutocompleteElement({}) as HTMLElement;
+    const autocomplete =
+      new google.maps.places.Autocomplete(input, {
+        types: ["address"],
+        fields: [
+          "formatted_address",
+          "geometry",
+        ],
+      });
 
-      /*
-       * IMPORTANT:
-       * Do not restrict the predictions yet.
-       *
-       * This allows Google to return normal address/place
-       * suggestions while we verify the autocomplete works.
-       */
-
-      autocompleteEl.setAttribute(
-        "placeholder",
-        "Enter your home address..."
-      );
-
-      /*
-       * Visual styling
-       */
-
-      autocompleteEl.style.width = "100%";
-      autocompleteEl.style.display = "block";
-      autocompleteEl.style.backgroundColor =
-        "transparent";
-      autocompleteEl.style.color = "#0B1E33";
-      autocompleteEl.style.colorScheme = "light";
-      autocompleteEl.style.border = "none";
-      autocompleteEl.style.outline = "none";
-      autocompleteEl.style.boxShadow = "none";
-
-      /*
-       * Save reference
-       */
-
-      placeAutocompleteRef.current =
-        autocompleteEl;
-
-      /*
-       * Clear old element before mounting.
-       */
-
-      autocompleteContainerRef.current.innerHTML =
-        "";
-
-      autocompleteContainerRef.current.appendChild(
-        autocompleteEl
-      );
-
-      /* ============================================================
-         GOOGLE PLACE SELECTION
-
-         CURRENT API:
-         gmp-select
-
-         NOT:
-         gmp-placeselect
-      ============================================================ */
-
-      const handlePlaceSelect = async (
-        event: Event
-      ) => {
-        const customEvent =
-          event as CustomEvent<{
-            placePrediction?: google.maps.places.PlacePrediction;
-          }>;
-
-        const placePrediction =
-          customEvent.detail?.placePrediction;
-
-        if (!placePrediction) {
-          console.warn(
-            "Google Places: no placePrediction found."
-          );
-          return;
-        }
-
-        try {
-          /*
-           * Convert prediction to Place.
-           */
+    const listener =
+      autocomplete.addListener(
+        "place_changed",
+        () => {
           const place =
-            placePrediction.toPlace();
-
-          /*
-           * Fetch only what we need.
-           */
-          await place.fetchFields({
-            fields: [
-              "formattedAddress",
-              "location",
-            ],
-          });
+            autocomplete.getPlace();
 
           const formatted =
-            place.formattedAddress ?? "";
-
-          const location =
-            place.location;
+            place.formatted_address ?? "";
 
           const lat =
-            location?.lat() ?? null;
+            place.geometry?.location?.lat() ??
+            null;
 
           const lng =
-            location?.lng() ?? null;
+            place.geometry?.location?.lng() ??
+            null;
 
           setAddress(formatted);
 
@@ -244,147 +299,80 @@ export default function Hero() {
           });
 
           setShowValidation(false);
-        } catch (error) {
-          console.error(
-            "Google Places selection error:",
-            error
-          );
-        }
-      };
 
-      /*
-       * Listen to the CURRENT Google event.
-       */
-      autocompleteEl.addEventListener(
-        "gmp-select",
-        handlePlaceSelect
-      );
-
-      /* ============================================================
-         INPUT EVENT
-      ============================================================ */
-
-      const handleInput = (event: Event) => {
-        /*
-         * The new Google element is a web component.
-         * The event target may be the component itself,
-         * so don't depend on target.value.
-         *
-         * We only use this event to invalidate a previous
-         * selected place when the user starts typing again.
-         */
-
-        if (selectedPlace) {
-          setSelectedPlace(null);
-        }
-
-        if (showValidation) {
-          setShowValidation(false);
-        }
-      };
-
-      autocompleteEl.addEventListener(
-        "input",
-        handleInput
-      );
-
-      /* ============================================================
-         CLEANUP
-      ============================================================ */
-
-      return () => {
-        autocompleteEl.removeEventListener(
-          "gmp-select",
-          handlePlaceSelect
-        );
-
-        autocompleteEl.removeEventListener(
-          "input",
-          handleInput
-        );
-
-        if (
-          autocompleteContainerRef.current
-        ) {
-          autocompleteContainerRef.current.innerHTML =
-            "";
-        }
-
-        placeAutocompleteRef.current = null;
-      };
-    }
-
-    /* ============================================================
-       LEGACY AUTOCOMPLETE FALLBACK
-    ============================================================ */
-
-    if (
-      places.Autocomplete &&
-      addressInputRef.current
-    ) {
-      const input =
-        addressInputRef.current;
-
-      const autocomplete =
-        new places.Autocomplete(
-          input,
-          {
-            types: ["address"],
-            fields: [
-              "formatted_address",
-              "geometry",
-            ],
-          }
-        );
-
-      const listener =
-        autocomplete.addListener(
-          "place_changed",
-          () => {
-            const place =
-              autocomplete.getPlace();
-
-            const formatted =
-              place.formatted_address ?? "";
-
-            const lat =
-              place.geometry?.location?.lat() ??
-              null;
-
-            const lng =
-              place.geometry?.location?.lng() ??
-              null;
-
-            setAddress(formatted);
-
-            setSelectedPlace({
-              address: formatted,
-              lat,
-              lng,
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              positionPlacesDropdown();
             });
+          });
+        },
+      );
 
-            setShowValidation(false);
-          }
-        );
+    const observer = new MutationObserver(() => {
+      const pac =
+        document.querySelector(".pac-container");
 
-      return () => {
-        google.maps.event.removeListener(
-          listener
-        );
+      if (!pac) return;
 
-        document
-          .querySelectorAll(".pac-container")
-          .forEach((el) => el.remove());
-      };
-    }
+      requestAnimationFrame(() => {
+        positionPlacesDropdown();
+      });
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+
+    const handleResize = () =>
+      positionPlacesDropdown();
+
+    const handleScroll = () =>
+      positionPlacesDropdown();
+
+    window.addEventListener(
+      "resize",
+      handleResize,
+    );
+
+    window.addEventListener(
+      "scroll",
+      handleScroll,
+      true,
+    );
+
+    return () => {
+      google.maps.event.removeListener(
+        listener,
+      );
+
+      observer.disconnect();
+
+      window.removeEventListener(
+        "resize",
+        handleResize,
+      );
+
+      window.removeEventListener(
+        "scroll",
+        handleScroll,
+        true,
+      );
+
+      document
+        .querySelectorAll(".pac-container")
+        .forEach((element) => {
+          element.remove();
+        });
+    };
   }, [apiKey, mapsLoaded]);
 
   /* ============================================================
-     LEGACY INPUT CHANGE
-  ============================================================ */
+     INPUT CHANGE
+     ============================================================ */
 
   const handleAddressChange = (
-    value: string
+    value: string,
   ) => {
     setAddress(value);
 
@@ -398,11 +386,15 @@ export default function Hero() {
     if (showValidation) {
       setShowValidation(false);
     }
+
+    requestAnimationFrame(() => {
+      positionPlacesDropdown();
+    });
   };
 
   /* ============================================================
-     GSAP
-  ============================================================ */
+     GSAP — FAST, SMOOTH ENTRANCE
+     ============================================================ */
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -420,12 +412,12 @@ export default function Hero() {
 
       const lines =
         headlineRef.current?.querySelectorAll(
-          ".line-inner"
+          ".line-inner",
         );
 
       const trustItems =
         trustRef.current?.querySelectorAll(
-          ".trust-item"
+          ".trust-item",
         );
 
       const tl = gsap.timeline({
@@ -436,13 +428,15 @@ export default function Hero() {
 
       tl.fromTo(
         bgRef.current,
-        { scale: 1.1 },
+        {
+          scale: 1.1,
+        },
         {
           scale: 1,
           duration: 1.4,
           ease: "power2.out",
         },
-        0
+        0,
       )
         .fromTo(
           badgeRef.current,
@@ -455,7 +449,7 @@ export default function Hero() {
             y: 0,
             duration: 0.35,
           },
-          0.15
+          0.15,
         )
         .fromTo(
           lines ?? [],
@@ -470,7 +464,7 @@ export default function Hero() {
             stagger: 0.12,
             ease: "power4.out",
           },
-          "-=0.1"
+          "-=0.1",
         )
         .to(
           path ?? [],
@@ -479,7 +473,7 @@ export default function Hero() {
             duration: 0.9,
             ease: "power2.inOut",
           },
-          "-=0.55"
+          "-=0.55",
         )
         .fromTo(
           subRef.current,
@@ -492,7 +486,7 @@ export default function Hero() {
             y: 0,
             duration: 0.4,
           },
-          "-=0.45"
+          "-=0.45",
         )
         .fromTo(
           searchRef.current,
@@ -505,7 +499,7 @@ export default function Hero() {
             y: 0,
             duration: 0.45,
           },
-          "-=0.15"
+          "-=0.15",
         )
         .fromTo(
           trustItems ?? [],
@@ -519,7 +513,7 @@ export default function Hero() {
             duration: 0.4,
             stagger: 0.06,
           },
-          "-=0.2"
+          "-=0.2",
         )
         .fromTo(
           scrollCueRef.current,
@@ -530,7 +524,7 @@ export default function Hero() {
             opacity: 1,
             duration: 0.4,
           },
-          "-=0.1"
+          "-=0.1",
         );
 
       if (scrollCueRef.current) {
@@ -543,7 +537,7 @@ export default function Hero() {
             yoyo: true,
             ease: "sine.inOut",
             delay: 1.4,
-          }
+          },
         );
       }
     }, heroRef);
@@ -551,54 +545,92 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
-  /* ============================================================
-     DETECT NEW API
-  ============================================================ */
-
-  const hasNewAPI =
-    typeof window !== "undefined" &&
-    mapsLoaded &&
-    !!window.google?.maps?.places
-      ?.PlaceAutocompleteElement;
-
-  /* ============================================================
-     RENDER
-  ============================================================ */
-
   return (
     <section
       ref={heroRef}
-      className="relative flex min-h-[85vh] w-full overflow-hidden"
+      className="relative flex min-h-[85vh] w-full flex-col overflow-hidden"
     >
-      {/* ========================================================
-          BACKGROUND
-      ======================================================== */}
+      {/* ============================================================
+          BACKGROUND IMAGE
+          ============================================================ */}
 
       <div
         ref={bgRef}
-        className="absolute inset-0 z-0 scale-[1.01] bg-cover bg-center bg-no-repeat"
+        className="
+          absolute
+          inset-0
+          z-0
+          scale-[1.01]
+          bg-cover
+          bg-center
+          bg-no-repeat
+        "
         style={{
           backgroundImage:
             "url('/bgg.png')",
         }}
       />
 
-      {/* LEFT OVERLAY */}
+      {/* ============================================================
+          LEFT HEAVY OVERLAY
+          ============================================================ */}
 
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(100deg,rgba(11,30,51,0.94)_0%,rgba(11,30,51,0.88)_28%,rgba(11,30,51,0.55)_50%,rgba(11,30,51,0.18)_68%,rgba(11,30,51,0.08)_100%)]" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          z-[1]
+          bg-[linear-gradient(100deg,rgba(11,30,51,0.94)_0%,rgba(11,30,51,0.88)_28%,rgba(11,30,51,0.55)_50%,rgba(11,30,51,0.18)_68%,rgba(11,30,51,0.08)_100%)]
+        "
+      />
 
-      {/* VERTICAL GRADIENT */}
+      {/* ============================================================
+          VERTICAL GRADIENT
+          ============================================================ */}
 
-      <div className="pointer-events-none absolute inset-0 z-[1] bg-[linear-gradient(to_bottom,rgba(11,30,51,0.20),transparent_30%,transparent_65%,rgba(11,30,51,0.55)_100%)]" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          z-[1]
+          bg-[linear-gradient(to_bottom,rgba(11,30,51,0.20),transparent_30%,transparent_65%,rgba(11,30,51,0.55)_100%)]
+        "
+      />
 
-      {/* TEAL ATMOSPHERE */}
+      {/* ============================================================
+          TEAL ATMOSPHERE
+          ============================================================ */}
 
-      <div className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_55%_60%_at_20%_35%,rgba(31,174,159,0.12),transparent_65%)]" />
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          z-[2]
+          bg-[radial-gradient(ellipse_55%_60%_at_20%_35%,rgba(31,174,159,0.12),transparent_65%)]
+        "
+      />
 
-      {/* SIGNAL WAVE */}
+      {/* ============================================================
+          SIGNAL WAVE
+          ============================================================ */}
 
       <svg
-        className="pointer-events-none absolute right-[6%] top-[16%] z-[3] hidden h-[46%] w-[42%] max-w-2xl opacity-[0.55] lg:block"
+        className="
+          pointer-events-none
+          absolute
+          right-[6%]
+          top-[16%]
+          z-[3]
+          hidden
+          h-[46%]
+          w-[42%]
+          max-w-2xl
+          opacity-[0.55]
+          lg:block
+        "
         viewBox="0 0 700 500"
         fill="none"
         preserveAspectRatio="none"
@@ -615,18 +647,67 @@ export default function Hero() {
         />
       </svg>
 
-      {/* MAIN CONTENT */}
+      {/* ============================================================
+          MAIN CONTENT
+          ============================================================ */}
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-1 items-center px-4 pb-10 pt-[5vh] xs:px-5 sm:px-6 sm:pb-11 sm:pt-20 md:px-6 md:pb-12 md:pt-16 xl:px-10">
+      <div
+        className="
+          relative
+          z-10
+          mx-auto
+          flex
+          w-full
+          max-w-[1440px]
+          flex-1
+          items-center
+          px-4
+          pb-10
+          pt-[5vh]
+          xs:px-5
+          sm:px-6
+          sm:pb-11
+          sm:pt-20
+          md:px-6
+          md:pb-12
+          md:pt-16
+          xl:px-10
+        "
+      >
         <div className="w-full max-w-[620px] text-left">
-
-          {/* BADGE */}
+          {/* ========================================================
+              BADGE
+              ======================================================== */}
 
           <div
             ref={badgeRef}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/[0.16] bg-[#0B1E33]/45 px-3.5 py-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.18)] backdrop-blur-md sm:mb-5 sm:px-4"
+            className="
+              mb-4
+              inline-flex
+              items-center
+              gap-2
+              rounded-full
+              border
+              border-white/[0.16]
+              bg-[#0B1E33]/45
+              px-3.5
+              py-1.5
+              shadow-[0_10px_30px_rgba(0,0,0,0.18)]
+              backdrop-blur-md
+              sm:mb-5
+              sm:px-4
+            "
           >
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#1FAE9F] shadow-[0_0_12px_rgba(31,174,159,0.75)]" />
+            <span
+              className="
+                h-1.5
+                w-1.5
+                shrink-0
+                rounded-full
+                bg-[#1FAE9F]
+                shadow-[0_0_12px_rgba(31,174,159,0.75)]
+              "
+            />
 
             <span
               className={`${inter.className} text-[10.5px] font-medium tracking-wide text-white/90 sm:text-[12px]`}
@@ -635,11 +716,20 @@ export default function Hero() {
             </span>
           </div>
 
-          {/* HEADLINE */}
+          {/* ========================================================
+              HEADLINE
+              ======================================================== */}
 
           <h1
             ref={headlineRef}
-            className={`${playfair.className} mb-4 font-semibold text-white drop-shadow-[0_6px_24px_rgba(0,0,0,0.35)] sm:mb-5`}
+            className={`
+              ${playfair.className}
+              mb-4
+              font-semibold
+              text-white
+              drop-shadow-[0_6px_24px_rgba(0,0,0,0.35)]
+              sm:mb-5
+            `}
             style={{
               fontSize:
                 "clamp(1.65rem, 5.6vw, 2.9rem)",
@@ -660,22 +750,44 @@ export default function Hero() {
             </span>
           </h1>
 
-          {/* SUBTEXT */}
+          {/* ========================================================
+              SUBTEXT
+              ======================================================== */}
 
           <p
             ref={subRef}
-            className={`${inter.className} mb-6 max-w-md text-[14px] leading-relaxed text-white/75 drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)] sm:mb-7 sm:text-[15px] md:text-base`}
+            className={`
+              ${inter.className}
+              mb-6
+              max-w-md
+              text-[14px]
+              leading-relaxed
+              text-white/75
+              drop-shadow-[0_2px_10px_rgba(0,0,0,0.35)]
+              sm:mb-7
+              sm:text-[15px]
+              md:text-base
+            `}
           >
             Real-time home value insights —
-            fast, free, and built for
-            today&apos;s market.
+            fast, free, and built for today&apos;s
+            market.
           </p>
 
-          {/* SEARCH */}
+          {/* ========================================================
+              SEARCH
+              ======================================================== */}
 
           <div
             ref={searchRef}
-            className="relative z-30 mb-7 w-full max-w-xl sm:mb-8"
+            className="
+              relative
+              z-30
+              mb-7
+              w-full
+              max-w-xl
+              sm:mb-8
+            "
           >
             <div
               className="
@@ -694,22 +806,47 @@ export default function Hero() {
                 transition-all
                 duration-300
                 focus-within:border-[#C9A96E]/60
-                focus-within:shadow-[0_25px_60px_-20px_rgba(0,0,0,0.65),0_0_0_3px_rgba(201,169,110,0.10)]
+                focus-within:shadow-[0_30px_70px_-20px_rgba(0,0,0,0.75),0_0_0_4px_rgba(201,169,110,0.14)]
                 sm:rounded-[22px]
                 sm:p-2
                 sm:shadow-[0_35px_90px_-28px_rgba(0,0,0,0.75)]
                 md:rounded-full
               "
             >
-              <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
-
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-1.5
+                  sm:flex-row
+                  sm:items-center
+                  sm:gap-2
+                "
+              >
                 {/* INPUT */}
 
                 <div className="flex min-w-0 flex-1 items-center">
-
-                  {/* HOME ICON */}
-
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[13px] bg-[#0B1E33] text-[#1FAE9F] shadow-[0_8px_20px_rgba(11,30,51,0.2)] transition-colors duration-300 group-focus-within/search:text-[#C9A96E] sm:h-12 sm:w-12 sm:rounded-[16px] md:rounded-full">
+                  <div
+                    className="
+                      flex
+                      h-10
+                      w-10
+                      shrink-0
+                      items-center
+                      justify-center
+                      rounded-[13px]
+                      bg-[#0B1E33]
+                      text-[#1FAE9F]
+                      shadow-[0_8px_20px_rgba(11,30,51,0.2)]
+                      transition-colors
+                      duration-300
+                      group-focus-within/search:text-[#C9A96E]
+                      sm:h-12
+                      sm:w-12
+                      sm:rounded-[16px]
+                      md:rounded-full
+                    "
+                  >
                     <svg
                       width="17"
                       height="17"
@@ -734,41 +871,50 @@ export default function Hero() {
                     </svg>
                   </div>
 
-                  {/* GOOGLE NEW API */}
-
-                  {hasNewAPI ? (
-                    <div
-                      ref={
-                        autocompleteContainerRef
+                  <input
+                    ref={addressInputRef}
+                    type="text"
+                    value={address}
+                    onChange={(e) =>
+                      handleAddressChange(
+                        e.target.value,
+                      )
+                    }
+                    onFocus={() => {
+                      requestAnimationFrame(() => {
+                        positionPlacesDropdown();
+                      });
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        handleSubmit();
                       }
-                      className="google-autocomplete-container min-w-0 flex-1 px-2.5 sm:px-3.5 md:pl-4"
-                      aria-label="Home address autocomplete"
-                    />
-                  ) : (
-                    /* LEGACY FALLBACK */
-
-                    <input
-                      ref={addressInputRef}
-                      type="text"
-                      value={address}
-                      onChange={(e) =>
-                        handleAddressChange(
-                          e.target.value
-                        )
-                      }
-                      onKeyDown={(e) => {
-                        if (
-                          e.key === "Enter"
-                        ) {
-                          e.preventDefault();
-                          handleSubmit();
-                        }
-                      }}
-                      placeholder="Enter your home address..."
-                      autoComplete="off"
-                      className={`${inter.className} min-w-0 w-full bg-transparent px-2.5 py-3 text-left text-[13.5px] font-medium tracking-[-0.005em] text-[#0B1E33] outline-none focus:outline-none focus:ring-0 placeholder:font-normal placeholder:text-[#8A96A3] sm:px-3.5 sm:py-3.5 sm:text-[15px] md:pl-4 md:text-[16px]`}
-                    />
-                  )}
+                    }}
+                    placeholder="Enter your home address..."
+                    autoComplete="off"
+                    className={`
+                      ${inter.className}
+                      min-w-0
+                      w-full
+                      bg-transparent
+                      px-2.5
+                      py-3
+                      text-left
+                      text-[13.5px]
+                      font-medium
+                      tracking-[-0.005em]
+                      text-[#0B1E33]
+                      outline-none
+                      placeholder:font-normal
+                      placeholder:text-[#8A96A3]
+                      sm:px-3.5
+                      sm:py-3.5
+                      sm:text-[15px]
+                      md:pl-4
+                      md:text-[16px]
+                    `}
+                  />
                 </div>
 
                 {/* BUTTON */}
@@ -776,9 +922,54 @@ export default function Hero() {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className={`${inter.className} group relative z-10 flex w-full shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-[13px] bg-[#1FAE9F] px-4 py-3 text-[12.5px] font-semibold text-white shadow-[0_10px_22px_-8px_rgba(31,174,174,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#189184] hover:shadow-[0_18px_34px_-10px_rgba(31,174,159,0.85)] active:translate-y-0 sm:w-auto sm:gap-2 sm:rounded-[16px] sm:px-6 sm:py-3.5 sm:text-[14px] md:rounded-full`}
+                  className={`
+                    ${inter.className}
+                    group
+                    relative
+                    z-10
+                    flex
+                    w-full
+                    shrink-0
+                    items-center
+                    justify-center
+                    gap-1.5
+                    overflow-hidden
+                    rounded-[13px]
+                    bg-[#1FAE9F]
+                    px-4
+                    py-3
+                    text-[12.5px]
+                    font-semibold
+                    text-white
+                    shadow-[0_10px_22px_-8px_rgba(31,174,159,0.7)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-0.5
+                    hover:bg-[#189184]
+                    hover:shadow-[0_18px_34px_-10px_rgba(31,174,159,0.85)]
+                    active:translate-y-0
+                    sm:w-auto
+                    sm:gap-2
+                    sm:rounded-[16px]
+                    sm:px-6
+                    sm:py-3.5
+                    sm:text-[14px]
+                    md:rounded-full
+                  `}
                 >
-                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(115deg,transparent_35%,rgba(255,255,255,0.32)_50%,transparent_65%)] transition-transform duration-700 ease-out group-hover:translate-x-full" />
+                  <span
+                    className="
+                      pointer-events-none
+                      absolute
+                      inset-0
+                      -translate-x-full
+                      bg-[linear-gradient(115deg,transparent_35%,rgba(255,255,255,0.32)_50%,transparent_65%)]
+                      transition-transform
+                      duration-700
+                      ease-out
+                      group-hover:translate-x-full
+                    "
+                  />
 
                   <span className="relative whitespace-nowrap">
                     See My Home Value
@@ -791,7 +982,15 @@ export default function Hero() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2.5"
-                    className="relative shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 sm:h-[15px] sm:w-[15px]"
+                    className="
+                      relative
+                      shrink-0
+                      transition-transform
+                      duration-300
+                      group-hover:translate-x-0.5
+                      sm:h-[15px]
+                      sm:w-[15px]
+                    "
                     aria-hidden="true"
                   >
                     <path
@@ -815,11 +1014,21 @@ export default function Hero() {
             )}
           </div>
 
-          {/* TRUST ITEMS */}
+          {/* ========================================================
+              TRUST ITEMS
+              ======================================================== */}
 
           <div
             ref={trustRef}
-            className="flex flex-wrap items-center gap-x-5 gap-y-3 sm:gap-x-7 sm:gap-y-3.5"
+            className="
+              flex
+              flex-wrap
+              items-center
+              gap-x-5
+              gap-y-3
+              sm:gap-x-7
+              sm:gap-y-3.5
+            "
           >
             <TrustItem
               icon={
@@ -906,11 +1115,21 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* SCROLL */}
+      {/* ============================================================
+          SCROLL CUE
+          ============================================================ */}
 
       <div
         ref={scrollCueRef}
-        className="relative z-10 hidden justify-center pb-6 md:flex md:pb-7"
+        className="
+          relative
+          z-10
+          hidden
+          justify-center
+          pb-6
+          md:flex
+          md:pb-7
+        "
       >
         <div className="flex flex-col items-center gap-1.5 text-white/45">
           <span
@@ -937,7 +1156,9 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* LOADING */}
+      {/* ============================================================
+          LOADING
+          ============================================================ */}
 
       {isSearching && (
         <HomeDataLoading
@@ -952,7 +1173,7 @@ export default function Hero() {
 
 /* ===============================================================
    TRUST ITEM
-=============================================================== */
+   =============================================================== */
 
 function TrustItem({
   icon,
@@ -965,21 +1186,39 @@ function TrustItem({
 }) {
   return (
     <div className="trust-item flex items-center gap-2.5">
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/[0.15] bg-white/[0.06] text-[#1FAE9F] backdrop-blur-sm sm:h-8 sm:w-8">
+      <div
+        className="
+          flex
+          h-8
+          w-8
+          shrink-0
+          items-center
+          justify-center
+          rounded-full
+          border
+          border-white/10
+          bg-[#0B1E33]/40
+          text-[#1FAE9F]
+          backdrop-blur-sm
+          sm:h-9
+          sm:w-9
+        "
+      >
         <svg
-          width="15"
-          height="15"
+          width="17"
+          height="17"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          strokeWidth="1.6"
+          strokeWidth="1.7"
           aria-hidden="true"
+          className="sm:h-[18px] sm:w-[18px]"
         >
           {icon}
         </svg>
       </div>
 
-      <div>
+      <div className="text-left leading-tight">
         <div
           className={`${inter.className} text-[11px] font-semibold text-white sm:text-[12px] md:text-sm`}
         >

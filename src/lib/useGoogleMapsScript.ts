@@ -11,168 +11,121 @@ declare global {
 let googleMapsPromise: Promise<void> | null = null;
 
 export function useGoogleMapsScript(
-  apiKey: string
+  apiKey: string,
 ) {
-  const [loaded, setLoaded] = useState(false);
+  const [loaded, setLoaded] =
+    useState(false);
 
   useEffect(() => {
     if (!apiKey) {
       console.warn(
-        "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is missing."
+        "NEXT_PUBLIC_GOOGLE_MAPS_API_KEY is missing.",
       );
 
       return;
     }
 
-    /* ============================================================
-       ALREADY LOADED
-    ============================================================ */
-
+    /*
+     * Already loaded.
+     */
     if (
       window.google?.maps?.places
-        ?.PlaceAutocompleteElement ||
-      window.google?.maps?.places?.Autocomplete
     ) {
       setLoaded(true);
       return;
     }
 
-    /* ============================================================
-       CREATE / REUSE SCRIPT PROMISE
-    ============================================================ */
-
+    /*
+     * Prevent multiple Google Maps scripts
+     * from being injected.
+     */
     if (!googleMapsPromise) {
-      googleMapsPromise = new Promise<void>(
-        (resolve, reject) => {
-          /* ========================================================
-             EXISTING SCRIPT
-          ======================================================== */
-
-          const existingScript =
-            document.querySelector(
-              'script[data-google-maps="true"]'
-            ) as HTMLScriptElement | null;
-
-          if (existingScript) {
+      googleMapsPromise =
+        new Promise<void>(
+          (resolve, reject) => {
             /*
-             * The script may already have loaded
-             * before this hook ran.
+             * Check if script already exists.
              */
+            const existingScript =
+              document.querySelector(
+                'script[data-google-maps="true"]',
+              ) as HTMLScriptElement | null;
 
-            if (
-              window.google?.maps?.places
-                ?.PlaceAutocompleteElement ||
-              window.google?.maps?.places
-                ?.Autocomplete
-            ) {
-              resolve();
+            if (existingScript) {
+              existingScript.addEventListener(
+                "load",
+                () => resolve(),
+              );
+
+              existingScript.addEventListener(
+                "error",
+                () =>
+                  reject(
+                    new Error(
+                      "Google Maps failed to load.",
+                    ),
+                  ),
+              );
+
               return;
             }
 
-            existingScript.addEventListener(
-              "load",
-              () => resolve(),
-              { once: true }
-            );
+            const script =
+              document.createElement(
+                "script",
+              );
 
-            existingScript.addEventListener(
-              "error",
-              () =>
-                reject(
-                  new Error(
-                    "Google Maps failed to load."
-                  )
+            script.src =
+              `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+                apiKey,
+              )}&libraries=places&loading=async`;
+
+            script.async = true;
+            script.defer = true;
+
+            script.dataset.googleMaps =
+              "true";
+
+            script.onload = () => {
+              /*
+               * Google may finish the script
+               * before places is available.
+               */
+              const checkPlaces =
+                () => {
+                  if (
+                    window.google?.maps
+                      ?.places
+                  ) {
+                    resolve();
+                    return;
+                  }
+
+                  window.setTimeout(
+                    checkPlaces,
+                    50,
+                  );
+                };
+
+              checkPlaces();
+            };
+
+            script.onerror = () => {
+              googleMapsPromise = null;
+
+              reject(
+                new Error(
+                  "Google Maps JavaScript API failed to load.",
                 ),
-              { once: true }
-            );
-
-            return;
-          }
-
-          /* ========================================================
-             CREATE SCRIPT
-          ======================================================== */
-
-          const script =
-            document.createElement("script");
-
-          script.src =
-            `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
-              apiKey
-            )}&libraries=places&loading=async&v=weekly`;
-
-          script.async = true;
-          script.defer = true;
-
-          script.dataset.googleMaps =
-            "true";
-
-          /* ========================================================
-             SCRIPT LOAD
-          ======================================================== */
-
-          script.onload = () => {
-            const checkPlaces = () => {
-              /*
-               * New Places Autocomplete API
-               */
-
-              if (
-                window.google?.maps?.places
-                  ?.PlaceAutocompleteElement
-              ) {
-                resolve();
-                return;
-              }
-
-              /*
-               * Legacy API fallback
-               */
-
-              if (
-                window.google?.maps?.places
-                  ?.Autocomplete
-              ) {
-                resolve();
-                return;
-              }
-
-              /*
-               * Google may finish initializing
-               * slightly after script.onload.
-               */
-
-              window.setTimeout(
-                checkPlaces,
-                50
               );
             };
 
-            checkPlaces();
-          };
-
-          /* ========================================================
-             SCRIPT ERROR
-          ======================================================== */
-
-          script.onerror = () => {
-            googleMapsPromise = null;
-
-            reject(
-              new Error(
-                "Google Maps JavaScript API failed to load."
-              )
+            document.head.appendChild(
+              script,
             );
-          };
-
-          document.head.appendChild(script);
-        }
-      );
+          },
+        );
     }
-
-    /* ============================================================
-       HANDLE PROMISE
-    ============================================================ */
 
     googleMapsPromise
       .then(() => {
@@ -181,7 +134,7 @@ export function useGoogleMapsScript(
       .catch((error) => {
         console.error(
           "Google Maps loading error:",
-          error
+          error,
         );
 
         setLoaded(false);
