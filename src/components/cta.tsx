@@ -343,24 +343,24 @@ export default function CtaBanner() {
                   href="/#home"
                   ref={buttonRef}
                   className={`
-          ${inter.className}
-          group
-          bg-[#1FAE9F]
-          hover:bg-[#189184]
-          text-white
-          text-xs md:text-sm
-          font-semibold
-          rounded-full
-          px-6 md:px-7
-          py-3
-          inline-flex
-          items-center
-          justify-center
-          gap-2
-          transition-all
-          hover:shadow-[0_10px_30px_-8px_rgba(31,174,159,0.5)]
-          hover:-translate-y-0.5
-        `}
+    ${inter.className}
+    group
+    bg-[#1FAE9F]
+    hover:bg-[#189184]
+    text-white
+    text-xs md:text-sm
+    font-semibold
+    rounded-full
+    px-6 md:px-7
+    py-3
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    transition-all
+    hover:shadow-[0_10px_30px_-8px_rgba(31,174,159,0.5)]
+    hover:-translate-y-0.5
+  `}
                 >
                   Get My Free Home Value
                   <svg

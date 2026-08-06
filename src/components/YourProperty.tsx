@@ -1,14 +1,14 @@
 "use client";
 
 import { Inter } from "next/font/google";
-import Image from "next/image";
+import type { ReactNode } from "react";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 interface PropertyDetail {
   label: string;
   value: string | number;
-  icon: React.ReactNode;
+  icon: ReactNode;
 }
 
 interface YourPropertyProps {
@@ -16,7 +16,6 @@ interface YourPropertyProps {
   bathrooms?: number;
   sqft?: number;
   yearBuilt?: number;
-  imageSrc?: string;
 }
 
 export default function YourProperty({
@@ -24,7 +23,6 @@ export default function YourProperty({
   bathrooms = 3,
   sqft = 2110,
   yearBuilt = 2014,
-  imageSrc = "/bgg.png",
 }: Partial<YourPropertyProps>) {
   const details: PropertyDetail[] = [
     {
@@ -75,40 +73,74 @@ export default function YourProperty({
     <section className="mx-auto mt-8 w-full max-w-[1200px] px-4 pb-4 md:px-6 xl:px-10 md:mt-10">
       <div className="rounded-2xl bg-white p-6 shadow-[0_30px_70px_-40px_rgba(11,30,51,0.35)] ring-1 ring-[#0B1E33]/[0.06] sm:p-8">
         {/* ========================================================
-            HEADER
+            HEADER — label left + pill right (same as other cards)
             ======================================================== */}
-        <div className="mb-6 border-b border-[#0B1E33]/[0.06] pb-4">
+        <div className="mb-6 flex items-center justify-between gap-4 border-b border-[#0B1E33]/[0.06] pb-4">
           <span className={`${inter.className} text-xs font-semibold uppercase tracking-[0.14em] text-[#0B1E33]/50`}>
             Your Property
           </span>
+          <span
+            className={`${inter.className} inline-flex items-center gap-1.5 rounded-full bg-[#1FAE9F]/10 px-3 py-1 text-[11px] font-semibold text-[#0E8F82]`}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path
+                d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <path d="M8.5 12L11 14.5L15.8 9.7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Public records
+          </span>
         </div>
 
-        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1.05fr_1fr] md:gap-10">
-          {/* ======================================================
-              DETAILS LIST
-              ====================================================== */}
-          <ul className="divide-y divide-[#0B1E33]/[0.06]">
-            {details.map((d) => (
-              <li key={d.label} className="flex items-center justify-between gap-4 py-[15px] first:pt-1 last:pb-1">
-                <span className={`${inter.className} inline-flex min-w-0 items-center gap-3 text-sm text-[#0B1E33]/60`}>
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="1.8" className="shrink-0" aria-hidden="true">
-                    {d.icon}
-                  </svg>
-                  {d.label}
-                </span>
-                <span className={`${inter.className} shrink-0 whitespace-nowrap text-sm font-bold text-[#0B1E33]`}>
+        {/* ========================================================
+            STAT TILES — 2x2 on mobile, 4 across on desktop
+            ======================================================== */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {details.map((d) => (
+            <div
+              key={d.label}
+              className="group flex flex-col gap-4 rounded-xl bg-[#F7F9FA] px-4 py-5 ring-1 ring-[#0B1E33]/[0.05] transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_16px_40px_-24px_rgba(11,30,51,0.35)] hover:ring-[#1FAE9F]/30 sm:px-5"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#1FAE9F] shadow-[0_0_0_1px_rgba(31,174,159,0.2)] transition-colors duration-300 group-hover:bg-[#1FAE9F] group-hover:text-white">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  aria-hidden="true"
+                >
+                  {d.icon}
+                </svg>
+              </span>
+              <div>
+                <div className={`${inter.className} text-xl font-bold tracking-tight text-[#0B1E33] sm:text-2xl`}>
                   {d.value}
-                </span>
-              </li>
-            ))}
-          </ul>
+                </div>
+                <div
+                  className={`${inter.className} mt-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#0B1E33]/45 sm:text-[11px]`}
+                >
+                  {d.label}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-          {/* ======================================================
-              PROPERTY IMAGE
-              ====================================================== */}
-          <div className="relative h-[220px] w-full overflow-hidden rounded-xl ring-1 ring-[#0B1E33]/[0.06] sm:h-[250px] md:h-full md:min-h-[250px]">
-            <Image src={imageSrc} alt="Exterior view of the property" fill className="object-cover" />
-          </div>
+        {/* ========================================================
+            FOOTER NOTE — trust line, matches page disclaimer style
+            ======================================================== */}
+        <div className="mt-6 flex flex-col gap-2 border-t border-[#0B1E33]/[0.06] pt-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className={`${inter.className} inline-flex items-center gap-2 text-xs text-[#0B1E33]/50`}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="2" className="shrink-0">
+              <circle cx="12" cy="12" r="9" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M12 11v5M12 8v.01" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Details sourced from public records & MLS data.
+          </p>
         </div>
       </div>
     </section>

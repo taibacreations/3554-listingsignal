@@ -7,17 +7,18 @@ import { Playfair_Display, Inter } from "next/font/google";
 // 1. Import your screen components
 import ResultsHero from "@/components/ResultsHero";
 import EstimatedHomeValue from "@/components/EstimatedHomeValue";
-import SignalToSell from "@/components/SignalToTell"
+import SignalToSell from "@/components/SignalToTell";
 import YourProperty from "@/components/YourProperty";
 import CtaBanner from "@/components/CtaBanner";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
+// Blurred placeholder stats for the capture screen
 const stats = [
-  { value: "$485,000", label: "EST. VALUE", icon: "trend" as const },
-  { value: "92", label: "SIGNAL SCORE", icon: "bars" as const },
-  { value: "High", label: "CONFIDENCE", icon: "shield" as const },
+  { value: "$•••,•••", label: "EST. VALUE", icon: "trend" as const },
+  { value: "••", label: "SIGNAL SCORE", icon: "bars" as const },
+  { value: "••••••", label: "CONFIDENCE", icon: "shield" as const },
 ];
 
 const trustItems = [
@@ -167,7 +168,7 @@ export default function ResultsPage() {
 
         {/* Everything below sits on the plain page bg */}
         <SignalToSell />
-        <YourProperty imageSrc="/bgg.png" />
+        <YourProperty />
         <CtaBanner />
       </main>
     );
@@ -198,12 +199,14 @@ export default function ResultsPage() {
               </span>
             </div>
 
+            {/* UPDATED HEADLINE */}
             <h2 className={`${playfair.className} text-white text-2xl sm:text-3xl font-semibold leading-tight`}>
-              We found 4 recent sales <span className="text-[#1FAE9F]">near your home.</span>
+              Your results <span className="text-[#1FAE9F]">are ready.</span>
             </h2>
 
+            {/* UPDATED SUBTEXT */}
             <p className={`${inter.className} text-white/70 text-sm mt-4`}>
-              Enter your details to see what your home could sell for right now.
+              Enter your details to unlock your personalized home valuation report.
             </p>
 
             {/* Pulse icon over house image area */}
@@ -217,7 +220,7 @@ export default function ResultsPage() {
               </div>
             </div>
 
-            {/* Stats */}
+            {/* BLURRED STATS - no real numbers */}
             <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-auto">
               {stats.map((s) => (
                 <div key={s.label} className="bg-white/10 rounded-xl px-2 sm:px-3 py-3 flex flex-col gap-1.5">
@@ -240,7 +243,12 @@ export default function ResultsPage() {
                       />
                     )}
                   </svg>
-                  <span className={`${inter.className} text-white text-sm sm:text-base font-semibold`}>{s.value}</span>
+                  <span
+                    className={`${inter.className} text-white text-sm sm:text-base font-semibold tracking-widest select-none opacity-70`}
+                    style={{ filter: "blur(2px)" }}
+                  >
+                    {s.value}
+                  </span>
                   <span className={`${inter.className} text-white/50 text-[10px] tracking-wide`}>{s.label}</span>
                 </div>
               ))}
@@ -328,7 +336,7 @@ export default function ResultsPage() {
                 disabled={isSubmitting}
                 className={`${inter.className} w-full bg-[#1FAE9F] hover:bg-[#1a9a8c] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors`}
               >
-                {isSubmitting ? "Submitting..." : "Show Me My Home Value"}
+                {isSubmitting ? "Submitting..." : "Unlock My Report"}
                 {!isSubmitting && (
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />

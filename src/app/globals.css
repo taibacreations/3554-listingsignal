@@ -331,3 +331,8 @@ a, button {
     font-size: 9.5px !important;
   }
 }
+
+
+html {
+  scroll-behavior: smooth;
+}

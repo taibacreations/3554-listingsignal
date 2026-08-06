@@ -17,25 +17,24 @@ export default function Header() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      if (!logoRef.current || !infoRef.current) return;
+
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+      // Background bar stays still.
+      // Only elements come from top.
       tl.fromTo(
-        barRef.current,
-        { yPercent: -100 },
-        { yPercent: 0, duration: 0.7 },
-      )
-        .fromTo(
-          logoRef.current,
-          { opacity: 0, x: -14 },
-          { opacity: 1, x: 0, duration: 0.6 },
-          "-=0.35",
-        )
-        .fromTo(
-          infoRef.current,
-          { opacity: 0, x: 14 },
-          { opacity: 1, x: 0, duration: 0.6 },
-          "<",
-        );
-    });
+        logoRef.current,
+        { yPercent: -100, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, duration: 0.6 },
+      ).fromTo(
+        infoRef.current,
+        { yPercent: -100, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, duration: 0.6 },
+        "<0.08",
+      );
+    }, barRef);
+
     return () => ctx.revert();
   }, []);
 
@@ -43,7 +42,7 @@ export default function Header() {
     <div
       id="site-header"
       ref={barRef}
-      className="sticky top-0 inset-x-0 z-50 w-full bg-[#0B1E33]/95 backdrop-blur-md border-b border-white/[0.06] py-4"
+      className="sticky top-0 inset-x-0 z-50 w-full bg-[#0B1E33]/95 backdrop-blur-md border-b border-white/[0.06] py-4 overflow-hidden"
     >
       <header className="w-full px-4 md:px-6 xl:px-10 max-w-[1440px] mx-auto flex items-center justify-between">
         {/* Logo */}
@@ -95,7 +94,7 @@ export default function Header() {
             </span>
           </div>
 
-          {/* Homeowners checked - hidden on smallest screens */}
+          {/* Homeowners checked */}
           <div className="hidden sm:flex items-center gap-2 pl-4 border-l border-white/10">
             <svg
               className="shrink-0"

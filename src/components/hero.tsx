@@ -39,13 +39,15 @@ export default function Hero() {
   const addressInputRef = useRef<HTMLInputElement | null>(null);
 
   const [address, setAddress] = useState("");
-  const [selectedPlace, setSelectedPlace] =
-    useState<SelectedPlace | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(
+    null,
+  );
 
   const [showValidation, setShowValidation] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [pendingParams, setPendingParams] =
-    useState<URLSearchParams | null>(null);
+  const [pendingParams, setPendingParams] = useState<URLSearchParams | null>(
+    null,
+  );
 
   const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
@@ -62,9 +64,7 @@ export default function Hero() {
 
     if (!hero || !search || !input) return;
 
-    const pac = document.querySelector(
-      ".pac-container",
-    ) as HTMLElement | null;
+    const pac = document.querySelector(".pac-container") as HTMLElement | null;
 
     if (!pac) return;
 
@@ -72,59 +72,40 @@ export default function Hero() {
     const searchRect = search.getBoundingClientRect();
     const inputRect = input.getBoundingClientRect();
 
-    const scrollY =
-      window.scrollY || document.documentElement.scrollTop;
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    const scrollX =
-      window.scrollX || document.documentElement.scrollLeft;
+    const scrollX = window.scrollX || document.documentElement.scrollLeft;
 
     const viewportWidth = window.innerWidth;
 
     const pageHeroTop = heroRect.top + scrollY;
     const pageHeroBottom = heroRect.bottom + scrollY;
 
-    const desiredWidth = Math.min(
-      searchRect.width,
-      viewportWidth - 24,
-    );
+    const desiredWidth = Math.min(searchRect.width, viewportWidth - 24);
 
     const desiredLeft =
-      searchRect.left +
-      scrollX +
-      (searchRect.width - desiredWidth) / 2;
+      searchRect.left + scrollX + (searchRect.width - desiredWidth) / 2;
 
     const gap = 10;
 
     const belowTop = inputRect.bottom + scrollY + gap;
 
-    const spaceBelow =
-      pageHeroBottom - belowTop - 12;
+    const spaceBelow = pageHeroBottom - belowTop - 12;
 
-    const spaceAbove =
-      inputRect.top + scrollY - pageHeroTop - 12;
+    const spaceAbove = inputRect.top + scrollY - pageHeroTop - 12;
 
     const preferredHeight = 290;
 
     let dropdownTop = belowTop;
 
-    let maxHeight = Math.min(
-      preferredHeight,
-      Math.max(120, spaceBelow),
-    );
+    let maxHeight = Math.min(preferredHeight, Math.max(120, spaceBelow));
 
     /* Place above when there isn't enough room below */
 
     if (spaceBelow < 150 && spaceAbove > spaceBelow) {
-      maxHeight = Math.min(
-        preferredHeight,
-        Math.max(120, spaceAbove),
-      );
+      maxHeight = Math.min(preferredHeight, Math.max(120, spaceAbove));
 
-      dropdownTop =
-        inputRect.top +
-        scrollY -
-        maxHeight -
-        gap;
+      dropdownTop = inputRect.top + scrollY - maxHeight - gap;
     }
 
     /* Keep dropdown inside hero */
@@ -138,66 +119,30 @@ export default function Hero() {
     const maximumBottom = pageHeroBottom - 12;
 
     if (dropdownTop + maxHeight > maximumBottom) {
-      maxHeight = Math.max(
-        120,
-        maximumBottom - dropdownTop,
-      );
+      maxHeight = Math.max(120, maximumBottom - dropdownTop);
     }
 
-    const computedPosition =
-      window.getComputedStyle(pac).position;
+    const computedPosition = window.getComputedStyle(pac).position;
 
     if (computedPosition === "fixed") {
       dropdownTop -= scrollY;
     }
 
-    pac.style.setProperty(
-      "left",
-      `${desiredLeft}px`,
-      "important",
-    );
+    pac.style.setProperty("left", `${desiredLeft}px`, "important");
 
-    pac.style.setProperty(
-      "top",
-      `${dropdownTop}px`,
-      "important",
-    );
+    pac.style.setProperty("top", `${dropdownTop}px`, "important");
 
-    pac.style.setProperty(
-      "width",
-      `${desiredWidth}px`,
-      "important",
-    );
+    pac.style.setProperty("width", `${desiredWidth}px`, "important");
 
-    pac.style.setProperty(
-      "max-height",
-      `${maxHeight}px`,
-      "important",
-    );
+    pac.style.setProperty("max-height", `${maxHeight}px`, "important");
 
-    pac.style.setProperty(
-      "overflow-y",
-      "auto",
-      "important",
-    );
+    pac.style.setProperty("overflow-y", "auto", "important");
 
-    pac.style.setProperty(
-      "overflow-x",
-      "hidden",
-      "important",
-    );
+    pac.style.setProperty("overflow-x", "hidden", "important");
 
-    pac.style.setProperty(
-      "box-sizing",
-      "border-box",
-      "important",
-    );
+    pac.style.setProperty("box-sizing", "border-box", "important");
 
-    pac.style.setProperty(
-      "z-index",
-      "999999",
-      "important",
-    );
+    pac.style.setProperty("z-index", "999999", "important");
   };
 
   /* ============================================================
@@ -235,9 +180,7 @@ export default function Hero() {
   const handleLoadingComplete = () => {
     if (!pendingParams) return;
 
-    router.push(
-      `/results?${pendingParams.toString()}`,
-    );
+    router.push(`/results?${pendingParams.toString()}`);
   };
 
   /* ============================================================
@@ -245,11 +188,7 @@ export default function Hero() {
      ============================================================ */
 
   useEffect(() => {
-    if (
-      !apiKey ||
-      !mapsLoaded ||
-      !addressInputRef.current
-    ) {
+    if (!apiKey || !mapsLoaded || !addressInputRef.current) {
       return;
     }
 
@@ -263,54 +202,39 @@ export default function Hero() {
 
     const input = addressInputRef.current;
 
-    const autocomplete =
-      new google.maps.places.Autocomplete(input, {
-        types: ["address"],
-        fields: [
-          "formatted_address",
-          "geometry",
-        ],
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+      types: ["address"],
+      fields: ["formatted_address", "geometry"],
+    });
+
+    const listener = autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
+
+      const formatted = place.formatted_address ?? "";
+
+      const lat = place.geometry?.location?.lat() ?? null;
+
+      const lng = place.geometry?.location?.lng() ?? null;
+
+      setAddress(formatted);
+
+      setSelectedPlace({
+        address: formatted,
+        lat,
+        lng,
       });
 
-    const listener =
-      autocomplete.addListener(
-        "place_changed",
-        () => {
-          const place =
-            autocomplete.getPlace();
+      setShowValidation(false);
 
-          const formatted =
-            place.formatted_address ?? "";
-
-          const lat =
-            place.geometry?.location?.lat() ??
-            null;
-
-          const lng =
-            place.geometry?.location?.lng() ??
-            null;
-
-          setAddress(formatted);
-
-          setSelectedPlace({
-            address: formatted,
-            lat,
-            lng,
-          });
-
-          setShowValidation(false);
-
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              positionPlacesDropdown();
-            });
-          });
-        },
-      );
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          positionPlacesDropdown();
+        });
+      });
+    });
 
     const observer = new MutationObserver(() => {
-      const pac =
-        document.querySelector(".pac-container");
+      const pac = document.querySelector(".pac-container");
 
       if (!pac) return;
 
@@ -324,46 +248,26 @@ export default function Hero() {
       subtree: true,
     });
 
-    const handleResize = () =>
-      positionPlacesDropdown();
+    const handleResize = () => positionPlacesDropdown();
 
-    const handleScroll = () =>
-      positionPlacesDropdown();
+    const handleScroll = () => positionPlacesDropdown();
 
-    window.addEventListener(
-      "resize",
-      handleResize,
-    );
+    window.addEventListener("resize", handleResize);
 
-    window.addEventListener(
-      "scroll",
-      handleScroll,
-      true,
-    );
+    window.addEventListener("scroll", handleScroll, true);
 
     return () => {
-      google.maps.event.removeListener(
-        listener,
-      );
+      google.maps.event.removeListener(listener);
 
       observer.disconnect();
 
-      window.removeEventListener(
-        "resize",
-        handleResize,
-      );
+      window.removeEventListener("resize", handleResize);
 
-      window.removeEventListener(
-        "scroll",
-        handleScroll,
-        true,
-      );
+      window.removeEventListener("scroll", handleScroll, true);
 
-      document
-        .querySelectorAll(".pac-container")
-        .forEach((element) => {
-          element.remove();
-        });
+      document.querySelectorAll(".pac-container").forEach((element) => {
+        element.remove();
+      });
     };
   }, [apiKey, mapsLoaded]);
 
@@ -371,15 +275,10 @@ export default function Hero() {
      INPUT CHANGE
      ============================================================ */
 
-  const handleAddressChange = (
-    value: string,
-  ) => {
+  const handleAddressChange = (value: string) => {
     setAddress(value);
 
-    if (
-      selectedPlace &&
-      value !== selectedPlace.address
-    ) {
+    if (selectedPlace && value !== selectedPlace.address) {
       setSelectedPlace(null);
     }
 
@@ -401,8 +300,7 @@ export default function Hero() {
       const path = pathRef.current;
 
       if (path) {
-        const length =
-          path.getTotalLength();
+        const length = path.getTotalLength();
 
         gsap.set(path, {
           strokeDasharray: length,
@@ -410,15 +308,9 @@ export default function Hero() {
         });
       }
 
-      const lines =
-        headlineRef.current?.querySelectorAll(
-          ".line-inner",
-        );
+      const lines = headlineRef.current?.querySelectorAll(".line-inner");
 
-      const trustItems =
-        trustRef.current?.querySelectorAll(
-          ".trust-item",
-        );
+      const trustItems = trustRef.current?.querySelectorAll(".trust-item");
 
       const tl = gsap.timeline({
         defaults: {
@@ -528,17 +420,14 @@ export default function Hero() {
         );
 
       if (scrollCueRef.current) {
-        gsap.to(
-          scrollCueRef.current,
-          {
-            y: 7,
-            duration: 1.2,
-            repeat: -1,
-            yoyo: true,
-            ease: "sine.inOut",
-            delay: 1.4,
-          },
-        );
+        gsap.to(scrollCueRef.current, {
+          y: 7,
+          duration: 1.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          delay: 1.4,
+        });
       }
     }, heroRef);
 
@@ -566,8 +455,7 @@ export default function Hero() {
           bg-no-repeat
         "
         style={{
-          backgroundImage:
-            "url('/bgg.png')",
+          backgroundImage: "url('/bgg.png')",
         }}
       />
 
@@ -674,7 +562,7 @@ export default function Hero() {
           xl:px-10
         "
       >
-        <div className="w-full max-w-[620px] text-left">
+        <div className="w-full max-w-[680px] text-left">
           {/* ========================================================
               BADGE
               ======================================================== */}
@@ -731,21 +619,20 @@ export default function Hero() {
               sm:mb-5
             `}
             style={{
-              fontSize:
-                "clamp(1.65rem, 5.6vw, 2.9rem)",
+              fontSize: "clamp(1.65rem, 5.6vw, 2.9rem)",
               lineHeight: 1.16,
               letterSpacing: "-0.01em",
             }}
           >
             <span className="block overflow-hidden">
               <span className="line-inner block">
-                What Would You Walk Away With
+                Know What Your Home Is Worth —
               </span>
             </span>
 
             <span className="mt-0.5 block overflow-hidden">
               <span className="line-inner block text-[#1FAE9F]">
-                If You Sold Your Home Today?
+                And If Now Is the Time to Sell.
               </span>
             </span>
           </h1>
@@ -769,9 +656,9 @@ export default function Hero() {
               md:text-base
             `}
           >
-            Real-time home value insights —
-            fast, free, and built for today&apos;s
-            market.
+            Enter your address and get a real-time value estimate plus your
+            Signal to Sell Score — the only tool that tells you if today`s
+            market is working in your favor.
           </p>
 
           {/* ========================================================
@@ -875,11 +762,7 @@ export default function Hero() {
                     ref={addressInputRef}
                     type="text"
                     value={address}
-                    onChange={(e) =>
-                      handleAddressChange(
-                        e.target.value,
-                      )
-                    }
+                    onChange={(e) => handleAddressChange(e.target.value)}
                     onFocus={() => {
                       requestAnimationFrame(() => {
                         positionPlacesDropdown();
@@ -1022,10 +905,11 @@ export default function Hero() {
             ref={trustRef}
             className="
               flex
-              flex-wrap
-              items-center
+              flex-col
+              md:flex-row
+              
               gap-x-5
-              gap-y-3
+              gap-y-4
               sm:gap-x-7
               sm:gap-y-3.5
             "
@@ -1053,13 +937,7 @@ export default function Hero() {
             <TrustItem
               icon={
                 <>
-                  <rect
-                    x="4"
-                    y="10"
-                    width="16"
-                    height="11"
-                    rx="2"
-                  />
+                  <rect x="4" y="10" width="16" height="11" rx="2" />
 
                   <path
                     d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
@@ -1080,16 +958,9 @@ export default function Hero() {
             <TrustItem
               icon={
                 <>
-                  <circle
-                    cx="12"
-                    cy="13"
-                    r="8"
-                  />
+                  <circle cx="12" cy="13" r="8" />
 
-                  <path
-                    d="M12 2V5"
-                    strokeLinecap="round"
-                  />
+                  <path d="M12 2V5" strokeLinecap="round" />
 
                   <rect
                     x="10"
