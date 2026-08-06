@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { Playfair_Display, Inter } from "next/font/google";
 import gsap from "gsap";
+import Link from "next/link";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -49,7 +50,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-start justify-between gap-10 md:gap-6">
           {/* Brand + social */}
           <div className="footer-col flex flex-col gap-5">
-            <div className="flex items-center gap-2.5">
+            <Link href={"/#home"} className="flex items-center gap-2.5">
               <div className="bg-white rounded-lg p-2 flex items-center justify-center shrink-0">
                 <svg
                   width="18"
@@ -77,7 +78,7 @@ export default function Footer() {
                 Listing Signal
                 <sup className="text-xs align-super text-[#1FAE9F]">®</sup>
               </span>
-            </div>
+            </Link>
             <p
               className={`${inter.className} text-white/60 text-sm leading-relaxed max-w-xs`}
             >

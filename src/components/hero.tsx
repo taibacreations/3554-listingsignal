@@ -648,7 +648,7 @@ export default function Hero({ onAddressSubmit }: HeroProps) {
             `}
           >
             Enter your address and get a real-time value estimate plus your
-            Signal to Sell Score — the only tool that tells you if today`s
+            Signal to Sell Score — the only tool that tells you if today's
             market is working in your favor.
           </p>
 
