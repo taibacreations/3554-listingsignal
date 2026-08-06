@@ -3,9 +3,6 @@
 import { useEffect, useRef } from "react";
 import { Playfair_Display, Inter } from "next/font/google";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -18,6 +15,10 @@ export default function Footer() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      // Mount hote hi animate karein — scroll-trigger pe depend nahi
+      // karte, warna dynamic single-page height changes ke sath
+      // trigger positions stale ho kar footer permanently invisible
+      // reh sakta hai.
       gsap.fromTo(
         ".footer-col",
         { opacity: 0, y: 20 },
@@ -27,7 +28,7 @@ export default function Footer() {
           duration: 0.7,
           stagger: 0.12,
           ease: "power3.out",
-          scrollTrigger: { trigger: footerRef.current, start: "top 90%" },
+          delay: 0.15,
         },
       );
     }, footerRef);
@@ -45,7 +46,7 @@ export default function Footer() {
       <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-[#1FAE9F]/5 rounded-full blur-3xl pointer-events-none translate-x-1/2 translate-y-1/2" />
 
       <div className="max-w-[1440px] px-4 md:px-6 xl:px-10 mx-auto pt-12 md:pt-16 relative z-10">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-10 md:gap-6">
           {/* Brand + social */}
           <div className="footer-col flex flex-col gap-5">
             <div className="flex items-center gap-2.5">
@@ -85,7 +86,7 @@ export default function Footer() {
           </div>
 
           {/* Data security note */}
-          <div className="flex flex-col gap-[4vh] mb-[4vh]">
+          <div className="flex flex-col gap-8 md:gap-[4vh]">
             <div className="footer-col flex flex-col gap-3 md:justify-self-center">
               <div className="flex items-start gap-3">
                 <div className="shrink-0 w-10 h-10 rounded-xl bg-[#1FAE9F]/10 flex items-center justify-center mt-0.5">
@@ -124,7 +125,7 @@ export default function Footer() {
                 </div>
               </div>
             </div>
-            <div>
+            <div className="footer-col">
               <span
                 className={`${inter.className} text-white/40 text-xs font-medium tracking-wide uppercase mb-3 block`}
               >
@@ -151,7 +152,6 @@ export default function Footer() {
                     aria-label={social.name}
                     className="group w-9 h-9 rounded-lg bg-white/[0.06] hover:bg-[#1FAE9F]/20 flex items-center justify-center transition-all duration-300 hover:scale-110"
                   >
-                    {/* ✅ FIX: render the string as a real <path> element */}
                     <svg
                       width="15"
                       height="15"
@@ -166,58 +166,10 @@ export default function Footer() {
               </div>
             </div>
           </div>
-
-          {/* Email signup */}
-          {/* <div className="footer-col">
-            <div className="bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#1FAE9F]/10 rounded-full blur-2xl pointer-events-none translate-x-1/3 -translate-y-1/3" />
-
-              <div className="relative z-10 flex flex-col gap-3">
-                <div>
-                  <span
-                    className={`${inter.className} text-white text-sm font-semibold block mb-1.5`}
-                  >
-                    Stay Updated
-                  </span>
-                  <p
-                    className={`${inter.className} text-white/60 text-xs leading-relaxed`}
-                  >
-                    Get local market updates and tips straight to your inbox.
-                  </p>
-                </div>
-                <div className="flex items-center bg-white rounded-full p-1 gap-1">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className={`${inter.className} flex-1 min-w-0 outline-none text-sm text-[#0B1E33] placeholder:text-gray-400 px-4 py-2`}
-                  />
-                  <button className="bg-[#1FAE9F] hover:bg-[#189184] text-white rounded-full w-9 h-9 flex items-center justify-center shrink-0 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-[#1FAE9F]/20">
-                    <svg
-                      width="15"
-                      height="15"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                    >
-                      <path
-                        d="M5 12h14M13 6l6 6-6 6"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-                <p className={`${inter.className} text-white/40 text-[11px]`}>
-                  No spam, unsubscribe anytime.
-                </p>
-              </div>
-            </div>
-          </div> */}
         </div>
 
         {/* Bottom bar */}
-        <div className="footer-col border-t border-white/[0.06] py-[3vh]">
+        <div className="footer-col border-t border-white/[0.06] py-8 md:py-[3vh] mt-8">
           <div className="text-center">
             <p className={`${inter.className} text-white/40 text-sm`}>
               © 2026 Listing Signal. All rights reserved.

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Playfair_Display, Inter } from "next/font/google";
 import gsap from "gsap";
 
@@ -24,9 +23,11 @@ type SelectedPlace = {
   lng: number | null;
 };
 
-export default function Hero() {
-  const router = useRouter();
+interface HeroProps {
+  onAddressSubmit: (place: SelectedPlace) => void;
+}
 
+export default function Hero({ onAddressSubmit }: HeroProps) {
   const heroRef = useRef<HTMLElement | null>(null);
   const bgRef = useRef<HTMLDivElement | null>(null);
   const badgeRef = useRef<HTMLDivElement | null>(null);
@@ -45,7 +46,7 @@ export default function Hero() {
 
   const [showValidation, setShowValidation] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
-  const [pendingParams, setPendingParams] = useState<URLSearchParams | null>(
+  const [pendingPlace, setPendingPlace] = useState<SelectedPlace | null>(
     null,
   );
 
@@ -163,24 +164,14 @@ export default function Hero() {
       lng: null,
     };
 
-    const params = new URLSearchParams({
-      address: place.address,
-      ...(place.lat != null && {
-        lat: String(place.lat),
-      }),
-      ...(place.lng != null && {
-        lng: String(place.lng),
-      }),
-    });
-
-    setPendingParams(params);
+    setPendingPlace(place);
     setIsSearching(true);
   };
 
   const handleLoadingComplete = () => {
-    if (!pendingParams) return;
+    if (!pendingPlace) return;
 
-    router.push(`/results?${pendingParams.toString()}`);
+    onAddressSubmit(pendingPlace);
   };
 
   /* ============================================================

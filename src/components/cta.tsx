@@ -18,10 +18,14 @@ const inter = Inter({
   weight: ["400", "500", "600", "700"],
 });
 
-export default function CtaBanner() {
+interface CtaBannerProps {
+  onCtaClick?: () => void;
+}
+
+export default function CtaBanner({ onCtaClick }: CtaBannerProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLAnchorElement>(null);
+  const buttonRef = useRef<HTMLAnchorElement & HTMLButtonElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -339,10 +343,12 @@ export default function CtaBanner() {
 
               {/* CTA */}
               <div className="flex justify-center">
-                <Link
-                  href="/#home"
-                  ref={buttonRef}
-                  className={`
+                {onCtaClick ? (
+                  <button
+                    type="button"
+                    ref={buttonRef}
+                    onClick={onCtaClick}
+                    className={`
     ${inter.className}
     group
     bg-[#1FAE9F]
@@ -361,24 +367,66 @@ export default function CtaBanner() {
     hover:shadow-[0_10px_30px_-8px_rgba(31,174,159,0.5)]
     hover:-translate-y-0.5
   `}
-                >
-                  Get My Free Home Value
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    className="transition-transform duration-300 group-hover:translate-x-1"
                   >
-                    <path
-                      d="M5 12h14M13 6l6 6-6 6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </Link>
+                    Get My Free Home Value
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    >
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </button>
+                ) : (
+                  <Link
+                    href="/#home"
+                    ref={buttonRef}
+                    className={`
+    ${inter.className}
+    group
+    bg-[#1FAE9F]
+    hover:bg-[#189184]
+    text-white
+    text-xs md:text-sm
+    font-semibold
+    rounded-full
+    px-6 md:px-7
+    py-3
+    inline-flex
+    items-center
+    justify-center
+    gap-2
+    transition-all
+    hover:shadow-[0_10px_30px_-8px_rgba(31,174,159,0.5)]
+    hover:-translate-y-0.5
+  `}
+                  >
+                    Get My Free Home Value
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    >
+                      <path
+                        d="M5 12h14M13 6l6 6-6 6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </Link>
+                )}
               </div>
 
               {/* Trust */}
