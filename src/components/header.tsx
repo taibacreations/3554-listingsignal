@@ -47,35 +47,7 @@ export default function Header() {
       <header className="w-full px-4 md:px-6 xl:px-10 max-w-[1440px] mx-auto flex items-center justify-between">
         {/* Logo */}
         <Link href={"/"} ref={logoRef} className="flex items-center gap-2.5">
-          <div className="relative bg-white rounded-md p-1.5 flex items-center justify-center shadow-[0_0_0_1px_rgba(31,174,159,0.25)]">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#0B1E33"
-              strokeWidth="2.5"
-            >
-              <path
-                d="M3 11.5L12 4l9 7.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-          <span
-            className={`${playfair.className} text-white text-lg md:text-xl font-semibold tracking-tight`}
-          >
-            Listing Signal
-            <sup className="text-[10px] align-super text-[#1FAE9F] ml-0.5">
-              ®
-            </sup>
-          </span>
+          <img src="/logo.png" alt="logo" className="lg:w-[200px] w-[160px] h-auto"/>
         </Link>
 
         {/* Right side info */}
