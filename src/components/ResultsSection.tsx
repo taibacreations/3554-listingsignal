@@ -8,8 +8,13 @@ import EstimatedHomeValue from "@/components/EstimatedHomeValue";
 import SignalToSell from "@/components/SignalToTell";
 import YourProperty from "@/components/YourProperty";
 import CtaBanner from "@/components/CtaBanner";
+import ComparableSale from "./ComparableSale";
+import LockedBookingCTA from "./LockedBookingCTA";
 
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+});
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 const stats = [
@@ -24,8 +29,20 @@ const trustItems = [
     desc: "Bank-level encryption",
     icon: (
       <>
-        <rect x="4" y="10" width="16" height="11" rx="3" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10" strokeLinecap="round" strokeLinejoin="round" />
+        <rect
+          x="4"
+          y="10"
+          width="16"
+          height="11"
+          rx="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </>
     ),
   },
@@ -34,7 +51,11 @@ const trustItems = [
     desc: "Live MLS & market insights",
     icon: (
       <>
-        <path d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
         <path d="M9 13l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
       </>
     ),
@@ -72,7 +93,10 @@ interface ResultsSectionProps {
   onEditAddress: () => void;
 }
 
-export default function ResultsSection({ place, onEditAddress }: ResultsSectionProps) {
+export default function ResultsSection({
+  place,
+  onEditAddress,
+}: ResultsSectionProps) {
   const address = place.address;
   const lat = place.lat;
   const lng = place.lng;
@@ -133,12 +157,11 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
     }
   };
 
-  // ==========================================
-  // REPORT SCREEN: Rendered after form submission
-  // ==========================================
+  // Report screen block mein ye replace karein:
   if (showReport) {
     return (
       <main className="min-h-screen bg-[#F3F5F7]">
+        {/* Hero — sirf location pill, koi headline/blurred stats nahi */}
         <div className="relative overflow-hidden">
           <div
             className="pointer-events-none absolute inset-0 bg-cover bg-center"
@@ -153,14 +176,19 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_48%_at_50%_16%,rgba(243,245,247,0.92)_0%,rgba(243,245,247,0.5)_55%,rgba(243,245,247,0)_100%)]"
             aria-hidden="true"
           />
-
-          <ResultsHero location={address || "casc, Las Vegas, NV"} />
+          {/* ResultsHero ko reportMode=true pass karein */}
+          <ResultsHero
+            location={address || "Las Vegas, NV"}
+            reportMode={true}
+          />
           <EstimatedHomeValue />
         </div>
 
+        {/* Client ka requested order */}
         <SignalToSell />
         <YourProperty />
-        <CtaBanner />
+        <ComparableSale />
+        <LockedBookingCTA onUnlock={onEditAddress} />
       </main>
     );
   }
@@ -169,7 +197,7 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
   // LEAD CAPTURE FORM SCREEN
   // ==========================================
   return (
-    <div className="relative w-full bg-[#F3F5F7] overflow-hidden min-h-[90vh] flex justify-center items-center md:py-0 py-[10vh]">
+    <div className="relative w-full bg-[#F3F5F7] overflow-hidden min-h-screen flex justify-center items-center">
       <div className="absolute inset-0 bg-[url('/bg.png')] bg-cover bg-center" />
       <div className="absolute inset-0 bg-white/95" />
 
@@ -185,35 +213,65 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
           >
             <div className="flex items-center gap-2 mb-5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F] inline-block" />
-              <span className={`${inter.className} text-[#1FAE9F] text-xs font-semibold tracking-wide uppercase`}>
+              <span
+                className={`${inter.className} text-[#1FAE9F] text-xs font-semibold tracking-wide uppercase`}
+              >
                 Your Home Value Is Ready
               </span>
             </div>
 
-            <h2 className={`${playfair.className} text-white text-2xl sm:text-3xl font-semibold leading-tight`}>
+            <h2
+              className={`${playfair.className} text-white text-2xl sm:text-3xl font-semibold leading-tight`}
+            >
               Your results <span className="text-[#1FAE9F]">are ready.</span>
             </h2>
 
             <p className={`${inter.className} text-white/70 text-sm mt-4`}>
-              Enter your details to unlock your personalized home valuation report.
+              Enter your details to unlock your personalized home valuation
+              report.
             </p>
 
             <div className="flex-1 min-h-[180px] flex items-center justify-center py-6">
               <div className="relative w-16 h-16 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border-2 border-[#1FAE9F]/40" />
                 <div className="absolute inset-0 rounded-full border-2 border-[#1FAE9F] border-r-transparent border-b-transparent animate-spin" />
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="2">
-                  <path d="M3 12h4l2-7 4 14 2-7h6" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#1FAE9F"
+                  strokeWidth="2"
+                >
+                  <path
+                    d="M3 12h4l2-7 4 14 2-7h6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               </div>
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-auto">
               {stats.map((s) => (
-                <div key={s.label} className="bg-white/10 rounded-xl px-2 sm:px-3 py-3 flex flex-col gap-1.5">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="2">
+                <div
+                  key={s.label}
+                  className="bg-white/10 rounded-xl px-2 sm:px-3 py-3 flex flex-col gap-1.5"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#1FAE9F"
+                    strokeWidth="2"
+                  >
                     {s.icon === "trend" && (
-                      <path d="M3 17l6-6 4 4 8-8M15 7h6v6" strokeLinecap="round" strokeLinejoin="round" />
+                      <path
+                        d="M3 17l6-6 4 4 8-8M15 7h6v6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     )}
                     {s.icon === "bars" && (
                       <>
@@ -236,7 +294,11 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                   >
                     {s.value}
                   </span>
-                  <span className={`${inter.className} text-white/50 text-[10px] tracking-wide`}>{s.label}</span>
+                  <span
+                    className={`${inter.className} text-white/50 text-[10px] tracking-wide`}
+                  >
+                    {s.label}
+                  </span>
                 </div>
               ))}
             </div>
@@ -245,15 +307,25 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
           {/* Right panel - form */}
           <div className="px-6 sm:px-8 py-8 sm:py-10 flex flex-col">
             <div>
-              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
+              <label
+                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
+              >
                 Property location
               </label>
               <div className="flex items-center justify-between bg-[#F3F5F7] rounded-xl px-4 py-3 mb-5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#E85D75" className="shrink-0">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="#E85D75"
+                    className="shrink-0"
+                  >
                     <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z" />
                   </svg>
-                  <span className={`${inter.className} text-[#0B1E33] text-sm truncate`}>
+                  <span
+                    className={`${inter.className} text-[#0B1E33] text-sm truncate`}
+                  >
                     {address || "No address provided"}
                   </span>
                 </div>
@@ -266,7 +338,9 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                 </button>
               </div>
 
-              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
+              <label
+                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
+              >
                 First Name
               </label>
               <input
@@ -279,11 +353,15 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                 }`}
               />
               {errors.firstName && (
-                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.firstName}</p>
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>
+                  {errors.firstName}
+                </p>
               )}
               {!errors.firstName && <div className="mb-4" />}
 
-              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
+              <label
+                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
+              >
                 Email Address
               </label>
               <input
@@ -296,11 +374,15 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                 }`}
               />
               {errors.email && (
-                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.email}</p>
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>
+                  {errors.email}
+                </p>
               )}
               {!errors.email && <div className="mb-4" />}
 
-              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
+              <label
+                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
+              >
                 Phone Number
               </label>
               <input
@@ -313,7 +395,9 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                 }`}
               />
               {errors.phone && (
-                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.phone}</p>
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>
+                  {errors.phone}
+                </p>
               )}
               {!errors.phone && <div className="mb-6" />}
 
@@ -325,8 +409,19 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
               >
                 {isSubmitting ? "Submitting..." : "Unlock My Report"}
                 {!isSubmitting && (
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <path
+                      d="M5 12h14M13 6l6 6-6 6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 )}
               </button>
@@ -346,9 +441,15 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <path d="M8.5 12L11 14.5L15.8 9.7" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M8.5 12L11 14.5L15.8 9.7"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
-                <span className={`${inter.className} text-[#0B1E33]/50 text-xs text-center`}>
+                <span
+                  className={`${inter.className} text-[#0B1E33]/50 text-xs text-center`}
+                >
                   We never sell your data. No spam — ever.
                 </span>
               </div>
@@ -370,10 +471,14 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
                     {t.icon}
                   </svg>
                   <div className="min-w-0">
-                    <div className={`${inter.className} text-[#0B1E33] text-xs font-semibold leading-tight`}>
+                    <div
+                      className={`${inter.className} text-[#0B1E33] text-xs font-semibold leading-tight`}
+                    >
                       {t.title}
                     </div>
-                    <div className={`${inter.className} text-[#0B1E33]/40 text-[10px] leading-snug mt-0.5`}>
+                    <div
+                      className={`${inter.className} text-[#0B1E33]/40 text-[10px] leading-snug mt-0.5`}
+                    >
                       {t.desc}
                     </div>
                   </div>

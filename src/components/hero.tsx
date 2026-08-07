@@ -428,7 +428,7 @@ export default function Hero({ onAddressSubmit }: HeroProps) {
   return (
     <section
       ref={heroRef}
-      className="relative flex min-h-[85vh] w-full flex-col overflow-hidden"
+      className="relative flex min-h-screen w-full flex-col overflow-hidden"
     >
       {/* ============================================================
           BACKGROUND IMAGE
@@ -611,13 +611,13 @@ export default function Hero({ onAddressSubmit }: HeroProps) {
             `}
             style={{
               fontSize: "clamp(1.65rem, 5.6vw, 2.9rem)",
-              lineHeight: 1.16,
+              lineHeight: 1.40,
               letterSpacing: "-0.01em",
             }}
           >
             <span className="block overflow-hidden">
               <span className="line-inner block">
-                Know What Your Home Is Worth —
+                Know What Your Home Is Worth
               </span>
             </span>
 
@@ -974,47 +974,6 @@ export default function Hero({ onAddressSubmit }: HeroProps) {
               subtitle="Quick and simple"
             />
           </div>
-        </div>
-      </div>
-
-      {/* ============================================================
-          SCROLL CUE
-          ============================================================ */}
-
-      <div
-        ref={scrollCueRef}
-        className="
-          relative
-          z-10
-          hidden
-          justify-center
-          pb-6
-          md:flex
-          md:pb-7
-        "
-      >
-        <div className="flex flex-col items-center gap-1.5 text-white/45">
-          <span
-            className={`${inter.className} text-[9px] uppercase tracking-[0.22em]`}
-          >
-            Scroll
-          </span>
-
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-          >
-            <path
-              d="M5 9l7 7 7-7"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
         </div>
       </div>
 

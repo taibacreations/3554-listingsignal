@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Hero from "@/components/hero";
-import HowItWorks from "@/components/HowItWorks";
-import CtaBanner from "@/components/cta";
-import ResultsSection from "@/components/ResultsSection"
+import ResultsSection from "@/components/ResultsSection";
 
 type SelectedPlace = {
   address: string;
@@ -27,19 +25,20 @@ const Page = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const { ScrollTrigger } = await import("gsap/ScrollTrigger");
+      ScrollTrigger.refresh();
+    }, 100);
+    return () => clearTimeout(timer);
+  }, [screen]);
+
   if (screen === "results" && place) {
-    return (
-      <ResultsSection place={place} onEditAddress={handleEditAddress} />
-    );
+    return <ResultsSection place={place} onEditAddress={handleEditAddress} />;
   }
 
-  return (
-    <div>
-      <Hero onAddressSubmit={handleAddressSubmit} />
-      <HowItWorks />
-      <CtaBanner />
-    </div>
-  );
+  // Sirf Hero — HowItWorks aur CtaBanner hata diye
+  return <Hero onAddressSubmit={handleAddressSubmit} />;
 };
 
 export default Page;
