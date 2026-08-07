@@ -7,7 +7,6 @@ import ResultsHero from "@/components/ResultsHero";
 import EstimatedHomeValue from "@/components/EstimatedHomeValue";
 import SignalToSell from "@/components/SignalToTell";
 import YourProperty from "@/components/YourProperty";
-import CtaBanner from "@/components/CtaBanner";
 import ComparableSale from "./ComparableSale";
 import LockedBookingCTA from "./LockedBookingCTA";
 
