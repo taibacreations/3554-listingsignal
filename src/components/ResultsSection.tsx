@@ -196,7 +196,7 @@ export default function ResultsSection({
   // LEAD CAPTURE FORM SCREEN
   // ==========================================
   return (
-    <div className="relative w-full bg-[#F3F5F7] overflow-hidden min-h-screen flex justify-center items-center">
+    <div className="relative w-full bg-[#F3F5F7] overflow-hidden min-h-screen flex justify-center items-center md:py-0 pt-[15vh] pb-[10vh]">
       <div className="absolute inset-0 bg-[url('/bg.png')] bg-cover bg-center" />
       <div className="absolute inset-0 bg-white/95" />
 

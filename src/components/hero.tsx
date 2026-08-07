@@ -428,7 +428,7 @@ export default function Hero({ onAddressSubmit }: HeroProps) {
   return (
     <section
       ref={heroRef}
-      className="relative flex min-h-screen w-full flex-col overflow-hidden"
+      className="relative flex min-h-screen w-full flex-col overflow-hidden md:py-0 pt-[10vh]"
     >
       {/* ============================================================
           BACKGROUND IMAGE
