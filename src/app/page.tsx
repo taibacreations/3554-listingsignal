@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Hero from "@/components/hero";
+import HowItWorks from "@/components/HowItWorks";
 import ResultsSection from "@/components/ResultsSection";
 
 type SelectedPlace = {
@@ -37,8 +38,12 @@ const Page = () => {
     return <ResultsSection place={place} onEditAddress={handleEditAddress} />;
   }
 
-  // Sirf Hero — HowItWorks aur CtaBanner hata diye
-  return <Hero onAddressSubmit={handleAddressSubmit} />;
+  return (
+    <div>
+      <Hero onAddressSubmit={handleAddressSubmit} />
+      <HowItWorks />
+    </div>
+  );
 };
 
 export default Page;
