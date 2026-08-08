@@ -2,14 +2,8 @@
 
 import { Playfair_Display, Inter } from "next/font/google";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-});
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
 
 const stats = [
   {
@@ -17,16 +11,8 @@ const stats = [
     value: "$509,000",
     icon: (
       <>
-        <path
-          d="M3 11.5L12 4l9 7.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M3 11.5L12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9" strokeLinecap="round" strokeLinejoin="round" />
       </>
     ),
   },
@@ -70,15 +56,11 @@ export default function ResultsHero({
   return (
     <section className="relative z-10 pt-[15vh]">
       <div className="mx-auto flex w-full max-w-[1440px] px-4 md:px-6 xl:px-10 flex-col items-center text-center">
+
         {/* ── Badge ── */}
         <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#1FAE9F]/10 px-4 py-1.5">
-          <span
-            className="h-1.5 w-1.5 rounded-full bg-[#1FAE9F]"
-            aria-hidden="true"
-          />
-          <span
-            className={`${inter.className} text-[11px] font-semibold uppercase tracking-[0.14em] text-[#178F82]`}
-          >
+          <span className="h-1.5 w-1.5 rounded-full bg-[#1FAE9F]" aria-hidden="true" />
+          <span className={`${inter.className} text-[11px] font-semibold uppercase tracking-[0.14em] text-[#178F82]`}>
             Your Home Value Is Ready
           </span>
         </div>
@@ -89,7 +71,8 @@ export default function ResultsHero({
         >
           {reportMode ? (
             <>
-              Here&apos;s Where Your Home <br className="hidden sm:block" />
+              Here&apos;s Where Your Home{" "}
+              <br className="hidden sm:block" />
               <span className="text-[#1FAE9F]">Stands Today.</span>
             </>
           ) : (
@@ -102,9 +85,7 @@ export default function ResultsHero({
         </h1>
 
         {/* ── Subtext ── */}
-        <p
-          className={`${inter.className} mt-3 max-w-md px-2 text-sm text-[#0B1E33]/60`}
-        >
+        <p className={`${inter.className} mt-3 max-w-md px-2 text-sm text-[#0B1E33]/60`}>
           {reportMode
             ? "Based on recent sales and live market data in your area."
             : "Enter your details to see what your home could sell for right now."}
@@ -140,9 +121,7 @@ export default function ResultsHero({
                 >
                   {s.value}
                 </div>
-                <div
-                  className={`${inter.className} mt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0B1E33]/45`}
-                >
+                <div className={`${inter.className} mt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#0B1E33]/45`}>
                   {s.label}
                 </div>
               </div>
@@ -151,57 +130,58 @@ export default function ResultsHero({
         </div>
 
         {/* ── Address bar + Live Data badge ── */}
-        <div
-          className={`mb-2 inline-flex max-w-full items-stretch overflow-hidden rounded-full bg-[#0B1E33] shadow-[0_8px_28px_-8px_rgba(11,30,51,0.55)] ring-1 ring-white/[0.07] ${
-            reportMode ? "mt-5" : "mt-7"
-          }`}
-        >
-          {/* Pin + address */}
-          <div className="flex items-center gap-2.5 px-4 py-2.5 sm:px-5">
-            {/* Circular pin bg */}
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10">
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="white"
-                strokeWidth="2"
-                aria-hidden="true"
-              >
-                <path
-                  d="M12 21s-7-5.8-7-11a7 7 0 1114 0c0 5.2-7 11-7 11z"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="12" cy="10" r="2.5" />
-              </svg>
-            </div>
+<div
+  className={`mb-2 inline-flex w-[calc(100%-2rem)] max-w-[600px] items-stretch overflow-hidden rounded-full bg-[#0B1E33] shadow-[0_8px_28px_-8px_rgba(11,30,51,0.55)] ring-1 ring-white/[0.07] sm:w-auto ${
+    reportMode ? "mt-5" : "mt-7"
+  }`}
+>
+  {/* Pin + address */}
+  <div className="flex min-w-0 flex-1 items-center gap-2.5 px-4 py-2.5 sm:px-5">
+    {/* Circular pin bg */}
+    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/10">
+      <svg
+        width="11"
+        height="11"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="2"
+        aria-hidden="true"
+      >
+        <path
+          d="M12 21s-7-5.8-7-11a7 7 0 1114 0c0 5.2-7 11-7 11z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="12" cy="10" r="2.5" />
+      </svg>
+    </div>
 
-            {/* Address text */}
-            <span
-              className={`${inter.className} max-w-[200px] truncate text-[13px] font-medium text-white/90 sm:max-w-[380px] md:max-w-[500px]`}
-            >
-              {location}
-            </span>
-          </div>
+    {/* Address text — flex-1 + min-w-0 se properly truncate hoga */}
+    <span
+      className={`${inter.className} min-w-0 flex-1 truncate text-[13px] font-medium text-white/90`}
+    >
+      {location}
+    </span>
+  </div>
 
-          {/* Live Data badge — sirf report mode pe */}
-          {reportMode && (
-            <div className="flex items-center gap-2 border-l border-white/[0.10] bg-[#1FAE9F]/10 px-4 py-2.5">
-              {/* Pulsing dot */}
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1FAE9F] opacity-60" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#1FAE9F]" />
-              </span>
-              <span
-                className={`${inter.className} whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1FAE9F]`}
-              >
-                Live Data
-              </span>
-            </div>
-          )}
-        </div>
+  {/* Live Data badge — sirf report mode pe */}
+  {reportMode && (
+    <div className="flex shrink-0 items-center gap-2 border-l border-white/[0.10] bg-[#1FAE9F]/10 px-3 py-2.5 sm:px-4">
+      {/* Pulsing dot */}
+      <span className="relative flex h-2 w-2 shrink-0">
+        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1FAE9F] opacity-60" />
+        <span className="relative inline-flex h-2 w-2 rounded-full bg-[#1FAE9F]" />
+      </span>
+      <span
+        className={`${inter.className} whitespace-nowrap text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1FAE9F]`}
+      >
+        Live Data
+      </span>
+    </div>
+  )}
+</div>
+
       </div>
     </section>
   );
