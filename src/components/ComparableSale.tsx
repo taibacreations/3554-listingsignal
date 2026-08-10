@@ -1,9 +1,8 @@
 "use client";
 
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 
 export default function ComparableSale() {
   return (
@@ -20,48 +19,72 @@ export default function ComparableSale() {
           <span
             className={`${inter.className} inline-flex items-center gap-1.5 rounded-full bg-[#EAF6F4] px-3 py-1 text-[11px] font-semibold text-[#178F82]`}
           >
-            Nearest to your home
+            Nearest to you
           </span>
         </div>
 
         {/* Main content */}
-        <div className="flex flex-col gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-6">
+        <div className="px-5 pt-5 sm:px-6 sm:pt-6">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
 
-          {/* Left — address + details */}
-          <div className="flex flex-col gap-2">
-            <div>
-              <h3
-                className={`${inter.className} text-lg font-bold text-[#0B1E33] sm:text-xl`}
+            {/* Left — address + details */}
+            <div className="flex flex-col gap-2">
+              <div>
+                <h3
+                  className={`${inter.className} text-lg font-bold text-[#0B1E33] sm:text-xl`}
+                >
+                  4821 Sunset Ridge Dr
+                </h3>
+                <p
+                  className={`${inter.className} mt-0.5 text-sm text-[#0B1E33]/50`}
+                >
+                  0.18 mi away · 4 bed · 3 bath · 2,050 sqft
+                </p>
+              </div>
+
+              {/* Sold badge */}
+              <span
+                className={`${inter.className} inline-flex w-fit items-center rounded-full bg-[#EAF6F4] px-3 py-1 text-[12px] font-semibold text-[#178F82]`}
               >
-                10271 Headrick Dr
-              </h3>
-              <p
-                className={`${inter.className} mt-0.5 text-sm text-[#0B1E33]/50`}
-              >
-                0.18 mi away · 4/3 · 1,913 sqft
-              </p>
+                Sold 18 days ago
+              </span>
             </div>
 
-            {/* Sold badge */}
-            <span
-              className={`${inter.className} inline-flex w-fit items-center rounded-full bg-[#EAF6F4] px-3 py-1 text-[12px] font-semibold text-[#178F82]`}
-            >
-              Sold Aug 2025
-            </span>
+            {/* Right — price */}
+            <div className="mt-3 text-left sm:mt-0 sm:text-right">
+              <p
+                className={`${inter.className} text-[32px] font-bold leading-none text-[#0B1E33] sm:text-[38px]`}
+              >
+                $495,000
+              </p>
+              <p
+                className={`${inter.className} mt-1.5 text-sm font-semibold text-[#1FAE9F]`}
+              >
+                +3% vs list
+              </p>
+            </div>
           </div>
 
-          {/* Right — price */}
-          <div className="text-left sm:text-right">
-            <p
-              className={`${inter.className} text-[32px] font-bold leading-none text-[#0B1E33] sm:text-[38px]`}
-            >
-              $449,999
-            </p>
-            <p
-              className={`${inter.className} mt-1.5 text-sm font-semibold text-[#1FAE9F]`}
-            >
-              +3% vs list
-            </p>
+          {/* Similarity bar — Image 2 jaisa */}
+          <div className="mt-5 rounded-xl bg-[#F5F7F8] px-4 py-4 mb-5 sm:px-5">
+            <div className="mb-2 flex items-center justify-between">
+              <span
+                className={`${inter.className} text-sm font-medium text-[#0B1E33]/60`}
+              >
+                Similarity to your home
+              </span>
+              <span
+                className={`${inter.className} text-sm font-bold text-[#1FAE9F]`}
+              >
+                91%
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-[#E0E5E9]">
+              <div
+                className="h-full rounded-full bg-[linear-gradient(90deg,#1FAE9F,#2CC7B7)]"
+                style={{ width: "91%" }}
+              />
+            </div>
           </div>
         </div>
       </div>
