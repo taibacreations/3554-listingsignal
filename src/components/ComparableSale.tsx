@@ -31,12 +31,12 @@ export default function ComparableSale() {
             <div className="flex flex-col gap-2">
               <div>
                 <h3
-                  className={`${inter.className} text-lg font-bold text-[#0B1E33] sm:text-xl`}
+                  className={`${inter.className} text-lg font-bold text-[#153B5F] sm:text-xl`}
                 >
                   4821 Sunset Ridge Dr
                 </h3>
                 <p
-                  className={`${inter.className} mt-0.5 text-sm text-[#0B1E33]/50`}
+                  className={`${inter.className} mt-0.5 text-sm text-[#153B5F]/50`}
                 >
                   0.18 mi away · 4 bed · 3 bath · 2,050 sqft
                 </p>
@@ -53,7 +53,7 @@ export default function ComparableSale() {
             {/* Right — price */}
             <div className="mt-3 text-left sm:mt-0 sm:text-right">
               <p
-                className={`${inter.className} text-[32px] font-bold leading-none text-[#0B1E33] sm:text-[38px]`}
+                className={`${inter.className} text-[32px] font-bold leading-none text-[#153B5F] sm:text-[38px]`}
               >
                 $495,000
               </p>

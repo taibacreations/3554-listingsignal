@@ -31,7 +31,7 @@ export default function LockedBookingCTA({ onUnlock }: LockedBookingCTAProps) {
           — condition, updates, and presentation included.
         </p>
 
-        <p className={`${inter.className} mt-4 text-[15px] font-semibold text-[#D97706]`}>
+        <p className={`${inter.className} mt-4 md:text-[15px] text-[12px] font-semibold text-[#D97706]`}>
           Most homeowners are surprised by what we find.
         </p>
 
