@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { confirmBooking, getLeadById, savePdfRecord } from "@/lib/leads";
+import { confirmBooking, getLeadById, getLatestLeadByEmail, savePdfRecord } from "@/lib/leads";
 import { generateFullReportPdf } from "@/lib/pdf/generate";
 import { uploadPdf } from "@/lib/storage";
 import { sendEmail, fullReportEmailHtml } from "@/lib/email";
@@ -21,16 +21,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  const leadId = body.internalLeadId ?? body.internal_lead_id;
+  let leadId = body.internalLeadId ?? body.internal_lead_id;
+  let leadWithReport = leadId ? await getLeadById(leadId) : null;
 
-  if (!leadId) {
-    console.error("Booking webhook missing internalLeadId:", body);
-    return NextResponse.json({ error: "internalLeadId is required." }, { status: 400 });
+  // Fallback: if the GHL contact doesn't carry our internal lead id (e.g. a
+  // brand-new contact was created instead of matching an existing one),
+  // try matching by email against our most recent lead.
+  if (!leadWithReport && body.email) {
+    leadWithReport = await getLatestLeadByEmail(body.email);
+    leadId = leadWithReport?.id;
   }
 
-  const leadWithReport = await getLeadById(leadId);
-
-  if (!leadWithReport) {
+  if (!leadId || !leadWithReport) {
+    console.error("Booking webhook: could not match a lead:", body);
     return NextResponse.json({ error: "Lead not found." }, { status: 404 });
   }
 

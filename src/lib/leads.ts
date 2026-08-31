@@ -63,6 +63,14 @@ export async function savePdfRecord(input: {
   return pdf;
 }
 
+export async function getLatestLeadByEmail(email: string) {
+  return db.query.leads.findFirst({
+    where: eq(leads.email, email),
+    orderBy: (l, { desc }) => [desc(l.createdAt)],
+    with: { reports: { orderBy: (r, { desc }) => [desc(r.createdAt)], limit: 1 } },
+  });
+}
+
 export async function getLeadById(leadId: string) {
   return db.query.leads.findFirst({
     where: eq(leads.id, leadId),
