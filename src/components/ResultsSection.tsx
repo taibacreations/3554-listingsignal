@@ -8,7 +8,10 @@ import EstimatedHomeValue from "@/components/EstimatedHomeValue";
 import SignalToSell from "@/components/SignalToTell";
 import YourProperty from "@/components/YourProperty";
 import ComparableSale from "./ComparableSale";
+import LockedComparables from "./LockedComparables";
 import LockedBookingCTA from "./LockedBookingCTA";
+import { formatCurrency, formatCurrencyShort, estimateConfidence } from "@/lib/format";
+import type { SignalLabel } from "@/lib/signal-score";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -28,20 +31,8 @@ const trustItems = [
     desc: "Bank-level encryption",
     icon: (
       <>
-        <rect
-          x="4"
-          y="10"
-          width="16"
-          height="11"
-          rx="3"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <rect x="4" y="10" width="16" height="11" rx="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10" strokeLinecap="round" strokeLinejoin="round" />
       </>
     ),
   },
@@ -50,11 +41,7 @@ const trustItems = [
     desc: "Live MLS & market insights",
     icon: (
       <>
-        <path
-          d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+        <path d="M3 12a9 9 0 1118 0 9 9 0 01-18 0z" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M9 13l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
       </>
     ),
@@ -92,23 +79,71 @@ interface ResultsSectionProps {
   onEditAddress: () => void;
 }
 
-export default function ResultsSection({
-  place,
-  onEditAddress,
-}: ResultsSectionProps) {
+/* =====================================================================
+   SHAPE OF /api/property-report RESPONSE (see src/app/api/property-report/route.ts)
+   ===================================================================== */
+interface PropertyReportResponse {
+  leadId: string;
+  reportId: string;
+  address: string;
+  estimate: { price: number; priceRangeLow: number; priceRangeHigh: number };
+  subjectProperty: {
+    bedrooms?: number;
+    bathrooms?: number;
+    squareFootage?: number;
+    yearBuilt?: number;
+  };
+  propertyDetails: {
+    bedrooms: number | null;
+    bathrooms: number | null;
+    squareFootage: number | null;
+    yearBuilt: number | null;
+    estimated: boolean;
+  };
+  comparables: Array<{
+    formattedAddress: string;
+    distance: number;
+    bedrooms: number;
+    bathrooms: number;
+    squareFootage: number;
+    price: number;
+    status?: string;
+    daysOnMarket?: number;
+    correlation: number;
+  }>;
+  marketStats: {
+    medianPrice?: number;
+    medianPricePerSquareFoot?: number;
+  } | null;
+  signal: {
+    score: number;
+    label: SignalLabel;
+    raw: { momentumPct: number | null };
+  };
+}
+
+function messageForLabel(label: SignalLabel): string {
+  if (label === "Strong Signal") {
+    return "Buyer demand is high and homes are moving fast in your neighborhood. This is a strong window to list.";
+  }
+  if (label === "Steady Signal") {
+    return "Your neighborhood market is active and stable. Well-positioned homes are selling at a healthy pace.";
+  }
+  return "Buyer activity is building in your neighborhood. Homeowners who position early often see stronger offers than those who wait.";
+}
+
+export default function ResultsSection({ place, onEditAddress }: ResultsSectionProps) {
   const address = place.address;
   const lat = place.lat;
   const lng = place.lng;
 
-  const [form, setForm] = useState<FormState>({
-    firstName: "",
-    email: "",
-    phone: "",
-  });
+  const [form, setForm] = useState<FormState>({ firstName: "", email: "", phone: "" });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [showReport, setShowReport] = useState(false);
+  const [report, setReport] = useState<PropertyReportResponse | null>(null);
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -140,10 +175,30 @@ export default function ResultsSection({
     if (!validate()) return;
 
     setIsSubmitting(true);
-    try {
-      // TODO: replace with your actual lead-submission endpoint
-      console.log("Submitting lead:", { address, lat, lng, ...form });
+    setSubmitError(null);
 
+    try {
+      const res = await fetch("/api/property-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address,
+          latitude: lat,
+          longitude: lng,
+          firstName: form.firstName,
+          email: form.email,
+          phone: form.phone,
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Could not generate your report. Please try again.");
+      }
+
+      const data: PropertyReportResponse = await res.json();
+
+      setReport(data);
       setShowReport(true);
 
       setTimeout(() => {
@@ -151,16 +206,18 @@ export default function ResultsSection({
       }, 100);
     } catch (error) {
       console.error("Submission failed:", error);
+      setSubmitError(error instanceof Error ? error.message : "Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Report screen block mein ye replace karein:
-  if (showReport) {
+  if (showReport && report) {
+    const topComp = report.comparables?.[0];
+    const remainingComps = report.comparables?.slice(1) ?? [];
+
     return (
       <main className="min-h-screen bg-[#F3F5F7]">
-        {/* Hero — sirf location pill, koi headline/blurred stats nahi */}
         <div className="relative overflow-hidden">
           <div
             className="pointer-events-none absolute inset-0 bg-cover bg-center"
@@ -175,26 +232,90 @@ export default function ResultsSection({
             className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_55%_48%_at_50%_16%,rgba(243,245,247,0.92)_0%,rgba(243,245,247,0.5)_55%,rgba(243,245,247,0)_100%)]"
             aria-hidden="true"
           />
-          {/* ResultsHero ko reportMode=true pass karein */}
           <ResultsHero
-            location={address || "Las Vegas, NV"}
+            location={report.address || address || "Las Vegas, NV"}
             reportMode={true}
+            realEstValue={formatCurrency(report.estimate.price)}
+            realSignalScore={`${report.signal.score}/100`}
+            realConfidence={`${estimateConfidence(
+              report.estimate.price,
+              report.estimate.priceRangeLow,
+              report.estimate.priceRangeHigh,
+            )}%`}
           />
-          <EstimatedHomeValue />
+          <EstimatedHomeValue
+            value={formatCurrency(report.estimate.price)}
+            rangeLow={formatCurrency(report.estimate.priceRangeLow)}
+            rangeHigh={formatCurrency(report.estimate.priceRangeHigh)}
+            rangeLowShort={formatCurrencyShort(report.estimate.priceRangeLow)}
+            rangeHighShort={formatCurrencyShort(report.estimate.priceRangeHigh)}
+            confidence={estimateConfidence(
+              report.estimate.price,
+              report.estimate.priceRangeLow,
+              report.estimate.priceRangeHigh,
+            )}
+            trendChangePct={
+              report.signal.raw.momentumPct != null ? Math.round(report.signal.raw.momentumPct * 10) / 10 : 2.4
+            }
+            fillPct={Math.round(
+              ((report.estimate.price - report.estimate.priceRangeLow) /
+                (report.estimate.priceRangeHigh - report.estimate.priceRangeLow || 1)) *
+                100,
+            )}
+          />
         </div>
 
-        {/* Client ka requested order */}
-        <SignalToSell />
-        <YourProperty />
-        <ComparableSale />
-        <LockedBookingCTA onUnlock={onEditAddress} />
+        <SignalToSell
+          score={report.signal.score}
+          badgeLabel={report.signal.label}
+          message={messageForLabel(report.signal.label)}
+        />
+
+        <YourProperty
+          bedrooms={report.propertyDetails.bedrooms}
+          bathrooms={report.propertyDetails.bathrooms}
+          sqft={report.propertyDetails.squareFootage}
+          yearBuilt={report.propertyDetails.yearBuilt}
+          estimated={report.propertyDetails.estimated}
+        />
+
+        {topComp && (
+          <ComparableSale
+            address={topComp.formattedAddress}
+            distanceMi={topComp.distance}
+            beds={topComp.bedrooms}
+            baths={topComp.bathrooms}
+            sqft={topComp.squareFootage}
+            price={topComp.price}
+            status={topComp.status}
+            daysOnMarket={topComp.daysOnMarket ?? null}
+            similarityPct={Math.round((topComp.correlation ?? 0) * 100)}
+          />
+        )}
+
+        {remainingComps.length > 0 && (
+          <LockedComparables
+            comparables={remainingComps.map((c) => ({
+              address: c.formattedAddress,
+              distanceMi: c.distance,
+              beds: c.bedrooms,
+              baths: c.bathrooms,
+              sqft: c.squareFootage,
+              price: c.price,
+              status: c.status,
+            }))}
+            medianPrice={report.marketStats?.medianPrice}
+            medianPricePerSqft={report.marketStats?.medianPricePerSquareFoot}
+          />
+        )}
+
+        <LockedBookingCTA
+          bookingUrl={`${process.env.NEXT_PUBLIC_GHL_BOOKING_URL}?email=${encodeURIComponent(form.email)}&name=${encodeURIComponent(form.firstName)}`}
+        />
       </main>
     );
   }
 
-  // ==========================================
-  // LEAD CAPTURE FORM SCREEN
-  // ==========================================
   return (
     <div className="relative w-full bg-[#F3F5F7] overflow-hidden min-h-screen flex justify-center items-center md:py-0 pt-[15vh] pb-[10vh]">
       <div className="absolute inset-0 bg-[url('/bg.png')] bg-cover bg-center" />
@@ -202,7 +323,6 @@ export default function ResultsSection({
 
       <div className="relative z-10 max-w-[1200px] px-4 md:px-6 xl:px-10 mx-auto">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-          {/* Left panel */}
           <div
             className="relative bg-[#0B1E33] px-6 sm:px-8 py-8 sm:py-10 flex flex-col bg-cover bg-center"
             style={{
@@ -212,62 +332,31 @@ export default function ResultsSection({
           >
             <div className="flex items-center gap-2 mb-5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#1FAE9F] inline-block" />
-              <span
-                className={`${inter.className} text-[#1FAE9F] text-xs font-semibold tracking-wide uppercase`}
-              >
+              <span className={`${inter.className} text-[#1FAE9F] text-xs font-semibold tracking-wide uppercase`}>
                 Your Home Value Is Ready
               </span>
             </div>
 
-            <h2
-              className={`${playfair.className} text-white text-2xl sm:text-3xl font-semibold leading-tight`}
-            >
-              Your results <span className="text-[#1FAE9F]">are ready.</span>
+            <h2 className={`${playfair.className} text-white text-2xl sm:text-3xl font-bold leading-snug mb-4`}>
+              We found your property.
+              <br />
+              <span className="text-[#1FAE9F]">Unlock your report.</span>
             </h2>
 
-            <p className={`${inter.className} text-white/70 text-sm mt-4`}>
-              Enter your details to unlock your personalized home valuation
-              report.
+            <p className={`${inter.className} text-white/60 text-sm mb-8`}>
+              Enter your details below to see your instant home value, Signal Score, and comparable sales.
             </p>
 
-            <div className="flex-1 min-h-[180px] flex items-center justify-center py-6">
-              <div className="relative w-16 h-16 flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full border-2 border-[#1FAE9F]/40" />
-                <div className="absolute inset-0 rounded-full border-2 border-[#1FAE9F] border-r-transparent border-b-transparent animate-spin" />
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#1FAE9F"
-                  strokeWidth="2"
-                >
-                  <path
-                    d="M3 12h4l2-7 4 14 2-7h6"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 mt-auto">
+            <div className="mt-auto grid grid-cols-3 gap-3">
               {stats.map((s) => (
                 <div
                   key={s.label}
-                  className="bg-white/10 rounded-xl px-2 sm:px-3 py-3 flex flex-col gap-1.5"
+                  className="flex flex-col items-start gap-2 rounded-xl bg-white/[0.04] border border-white/10 px-3 py-3"
                 >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#1FAE9F"
-                    strokeWidth="2"
-                  >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="1.8">
                     {s.icon === "trend" && (
                       <path
-                        d="M3 17l6-6 4 4 8-8M15 7h6v6"
+                        d="M3 11.5L12 4l9 7.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9M10 20v-6h4v6"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       />
@@ -293,9 +382,7 @@ export default function ResultsSection({
                   >
                     {s.value}
                   </span>
-                  <span
-                    className={`${inter.className} text-white/50 text-[10px] tracking-wide`}
-                  >
+                  <span className={`${inter.className} text-white/50 text-[10px] tracking-wide`}>
                     {s.label}
                   </span>
                 </div>
@@ -303,28 +390,17 @@ export default function ResultsSection({
             </div>
           </div>
 
-          {/* Right panel - form */}
           <div className="px-6 sm:px-8 py-8 sm:py-10 flex flex-col">
             <div>
-              <label
-                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
-              >
+              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
                 Property location
               </label>
               <div className="flex items-center justify-between bg-[#F3F5F7] rounded-xl px-4 py-3 mb-5">
                 <div className="flex items-center gap-2 min-w-0">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="#E85D75"
-                    className="shrink-0"
-                  >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="#E85D75" className="shrink-0">
                     <path d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z" />
                   </svg>
-                  <span
-                    className={`${inter.className} text-[#0B1E33] text-sm truncate`}
-                  >
+                  <span className={`${inter.className} text-[#0B1E33] text-sm truncate`}>
                     {address || "No address provided"}
                   </span>
                 </div>
@@ -337,9 +413,7 @@ export default function ResultsSection({
                 </button>
               </div>
 
-              <label
-                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
-              >
+              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
                 First Name
               </label>
               <input
@@ -352,15 +426,11 @@ export default function ResultsSection({
                 }`}
               />
               {errors.firstName && (
-                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>
-                  {errors.firstName}
-                </p>
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.firstName}</p>
               )}
               {!errors.firstName && <div className="mb-4" />}
 
-              <label
-                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
-              >
+              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
                 Email Address
               </label>
               <input
@@ -372,16 +442,10 @@ export default function ResultsSection({
                   errors.email ? "border-[#E85D75]" : "border-[#0B1E33]/10"
                 }`}
               />
-              {errors.email && (
-                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>
-                  {errors.email}
-                </p>
-              )}
+              {errors.email && <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.email}</p>}
               {!errors.email && <div className="mb-4" />}
 
-              <label
-                className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}
-              >
+              <label className={`${inter.className} text-[#0B1E33] text-sm font-medium block mb-2`}>
                 Phone Number
               </label>
               <input
@@ -393,12 +457,12 @@ export default function ResultsSection({
                   errors.phone ? "border-[#E85D75]" : "border-[#0B1E33]/10"
                 }`}
               />
-              {errors.phone && (
-                <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>
-                  {errors.phone}
-                </p>
-              )}
+              {errors.phone && <p className={`${inter.className} text-[#E85D75] text-xs mb-4`}>{errors.phone}</p>}
               {!errors.phone && <div className="mb-6" />}
+
+              {submitError && (
+                <p className={`${inter.className} text-[#E85D75] text-xs mb-4 text-center`}>{submitError}</p>
+              )}
 
               <button
                 type="button"
@@ -406,49 +470,20 @@ export default function ResultsSection({
                 disabled={isSubmitting}
                 className={`${inter.className} w-full bg-[#1FAE9F] hover:bg-[#1a9a8c] disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-xl py-3.5 flex items-center justify-center gap-2 transition-colors`}
               >
-                {isSubmitting ? "Submitting..." : "Unlock My Report"}
+                {isSubmitting ? "Generating your report..." : "Unlock My Report"}
                 {!isSubmitting && (
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                  >
-                    <path
-                      d="M5 12h14M13 6l6 6-6 6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 )}
               </button>
 
               <div className="flex items-center justify-center gap-1.5 mt-4">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#1FAE9F"
-                  strokeWidth="2"
-                  className="shrink-0"
-                >
-                  <path
-                    d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M8.5 12L11 14.5L15.8 9.7"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1FAE9F" strokeWidth="2" className="shrink-0">
+                  <path d="M12 2L4.5 5V10.5C4.5 15.2 7.6 19.5 12 21.5C16.4 19.5 19.5 15.2 19.5 10.5V5L12 2Z" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M8.5 12L11 14.5L15.8 9.7" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-                <span
-                  className={`${inter.className} text-[#0B1E33]/50 text-xs text-center`}
-                >
+                <span className={`${inter.className} text-[#0B1E33]/50 text-xs text-center`}>
                   We never sell your data. No spam — ever.
                 </span>
               </div>
@@ -457,27 +492,14 @@ export default function ResultsSection({
             <div className="grid grid-cols-3 gap-3 mt-8 pt-6 border-t border-[#0B1E33]/10">
               {trustItems.map((t) => (
                 <div key={t.title} className="flex items-start gap-1.5">
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#0B1E33"
-                    strokeOpacity="0.5"
-                    strokeWidth="1.8"
-                    className="shrink-0 mt-0.5"
-                  >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B1E33" strokeOpacity="0.5" strokeWidth="1.8" className="shrink-0 mt-0.5">
                     {t.icon}
                   </svg>
                   <div className="min-w-0">
-                    <div
-                      className={`${inter.className} text-[#0B1E33] text-xs font-semibold leading-tight`}
-                    >
+                    <div className={`${inter.className} text-[#0B1E33] text-xs font-semibold leading-tight`}>
                       {t.title}
                     </div>
-                    <div
-                      className={`${inter.className} text-[#0B1E33]/40 text-[10px] leading-snug mt-0.5`}
-                    >
+                    <div className={`${inter.className} text-[#0B1E33]/40 text-[10px] leading-snug mt-0.5`}>
                       {t.desc}
                     </div>
                   </div>

@@ -6,10 +6,15 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] }
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["600", "700"] });
 
 interface LockedBookingCTAProps {
-  onUnlock?: () => void;
+  bookingUrl?: string;
 }
 
-export default function LockedBookingCTA({ onUnlock }: LockedBookingCTAProps) {
+export default function LockedBookingCTA({ bookingUrl }: LockedBookingCTAProps) {
+  const handleUnlock = () => {
+    if (bookingUrl) {
+      window.open(bookingUrl, "_blank", "noopener,noreferrer");
+    }
+  };
   return (
     <section className="mx-auto mt-6 w-full max-w-[1200px] px-4 pb-10 md:px-6 md:mt-8 xl:px-10">
 
@@ -39,7 +44,7 @@ export default function LockedBookingCTA({ onUnlock }: LockedBookingCTAProps) {
           <div className="absolute inset-0 animate-pulse rounded-xl bg-[#1FAE9F]/30 blur-md" />
           <button
             type="button"
-            onClick={onUnlock}
+            onClick={handleUnlock}
             className={`${inter.className} relative z-10 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#1FAE9F] px-6 py-4 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(31,174,159,0.6)] transition-all duration-300 hover:bg-[#189184] hover:-translate-y-0.5 active:translate-y-0`}
           >
             <span className="text-xl leading-none">📅</span>
@@ -153,7 +158,7 @@ export default function LockedBookingCTA({ onUnlock }: LockedBookingCTAProps) {
               <div className="absolute inset-0 animate-pulse rounded-xl bg-[#1FAE9F]/25 blur-lg" />
               <button
                 type="button"
-                onClick={onUnlock}
+                onClick={handleUnlock}
                 className={`${inter.className} relative z-10 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#1FAE9F] px-6 py-4 text-[15px] font-semibold text-white shadow-[0_8px_28px_-8px_rgba(31,174,159,0.65)] transition-all duration-300 hover:bg-[#189184] hover:shadow-[0_16px_40px_-8px_rgba(31,174,159,0.85)] hover:-translate-y-0.5 active:translate-y-0`}
               >
                 <span className="text-xl leading-none">📅</span>
