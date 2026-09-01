@@ -10,7 +10,8 @@ interface EstimatedHomeValueProps {
   rangeHigh?: string;
   rangeLowShort?: string;
   rangeHighShort?: string;
-  confidence?: number;
+  /** Preformatted confidence string, e.g. "82.0% (Medium)" */
+  confidenceLabel?: string;
   trendLabel?: string;
   trendChangePct?: number;
   /** 0–100 position of the fill on the range bar */
@@ -44,7 +45,7 @@ export default function EstimatedHomeValue({
   rangeHigh = "$542,000",
   rangeLowShort = "$476K",
   rangeHighShort = "$542K",
-  confidence = 97.5,
+  confidenceLabel = "97.5% (High)",
   trendLabel = "Today's market",
   trendChangePct = 2.4,
   fillPct = 62,
@@ -110,7 +111,7 @@ export default function EstimatedHomeValue({
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" aria-hidden="true">
                     <path d="M5 13l4 4L19 7" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  {confidence}% Confidence
+                  {confidenceLabel} Confidence
                 </span>
 
                 <span className={`${inter.className} text-right text-xs font-medium text-[#0B1E33]/45`}>

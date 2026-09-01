@@ -14,6 +14,7 @@ import {
   formatCurrency,
   formatCurrencyShort,
   estimateConfidence,
+  formatConfidence,
 } from "@/lib/format";
 import type { SignalLabel } from "@/lib/signal-score";
 
@@ -332,6 +333,12 @@ export default function ResultsSection({
     const remainingComps = report.comparables?.slice(1) ?? [];
     const isUnlocked = bookingStatus === "confirmed";
 
+    const confidencePct = estimateConfidence(
+      report.estimate.price,
+      report.estimate.priceRangeLow,
+      report.estimate.priceRangeHigh,
+    );
+
     return (
       <main className="min-h-screen bg-[#F3F5F7]">
         <div className="relative overflow-hidden">
@@ -353,11 +360,7 @@ export default function ResultsSection({
             reportMode={true}
             realEstValue={formatCurrency(report.estimate.price)}
             realSignalScore={`${report.signal.score}/100`}
-            realConfidence={`${estimateConfidence(
-              report.estimate.price,
-              report.estimate.priceRangeLow,
-              report.estimate.priceRangeHigh,
-            )}%`}
+            realConfidence={formatConfidence(confidencePct)}
           />
           <EstimatedHomeValue
             value={formatCurrency(report.estimate.price)}
@@ -365,11 +368,7 @@ export default function ResultsSection({
             rangeHigh={formatCurrency(report.estimate.priceRangeHigh)}
             rangeLowShort={formatCurrencyShort(report.estimate.priceRangeLow)}
             rangeHighShort={formatCurrencyShort(report.estimate.priceRangeHigh)}
-            confidence={estimateConfidence(
-              report.estimate.price,
-              report.estimate.priceRangeLow,
-              report.estimate.priceRangeHigh,
-            )}
+            confidenceLabel={formatConfidence(confidencePct)}
             trendChangePct={
               report.signal.raw.momentumPct != null
                 ? Math.round(report.signal.raw.momentumPct * 10) / 10

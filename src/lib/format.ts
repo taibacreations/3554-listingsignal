@@ -13,10 +13,10 @@ export function formatCurrencyShort(value: number): string {
 }
 
 /**
- * RentCast's /avm/value response does not include a direct "confidence %" field.
- * We approximate confidence from how tight the price range is relative to the
- * estimated price — a narrower range implies a more confident estimate.
- * Adjust this if RentCast adds a native confidence field later.
+ * RentCast's /avm/value response does not include a direct "confidence %"
+ * field. We approximate confidence from how tight the price range is
+ * relative to the estimated price — a narrower range implies a more
+ * confident estimate.
  */
 export function estimateConfidence(price: number, rangeLow: number, rangeHigh: number): number {
   if (!price) return 0;
@@ -24,4 +24,17 @@ export function estimateConfidence(price: number, rangeLow: number, rangeHigh: n
   // 0% spread -> ~99% confidence, 40%+ spread -> ~60% confidence (floor)
   const confidence = 99 - spreadPct * 1.0;
   return Math.max(60, Math.min(99, Math.round(confidence * 10) / 10));
+}
+
+export type ConfidenceLabel = "Low" | "Medium" | "High";
+
+export function confidenceLabel(confidencePct: number): ConfidenceLabel {
+  if (confidencePct >= 80) return "High";
+  if (confidencePct >= 65) return "Medium";
+  return "Low";
+}
+
+/** Matches the client's reference PDF format: "82.0% (Medium)" */
+export function formatConfidence(confidencePct: number): string {
+  return `${confidencePct.toFixed(1)}% (${confidenceLabel(confidencePct)})`;
 }
