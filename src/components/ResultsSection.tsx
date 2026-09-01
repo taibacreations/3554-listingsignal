@@ -144,6 +144,8 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
 
   const [showReport, setShowReport] = useState(false);
   const [report, setReport] = useState<PropertyReportResponse | null>(null);
+  const [bookingStatus, setBookingStatus] = useState<"pending" | "confirmed">("pending");
+  const [isCheckingBooking, setIsCheckingBooking] = useState(false);
 
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -199,6 +201,7 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
       const data: PropertyReportResponse = await res.json();
 
       setReport(data);
+      setBookingStatus("pending");
       setShowReport(true);
 
       setTimeout(() => {
@@ -212,9 +215,28 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
     }
   };
 
+  const handleCheckBookingStatus = async () => {
+    if (!report) return;
+    setIsCheckingBooking(true);
+    try {
+      const res = await fetch(`/api/reports/${report.leadId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.bookingStatus === "confirmed") {
+          setBookingStatus("confirmed");
+        }
+      }
+    } catch (error) {
+      console.error("Booking status check failed:", error);
+    } finally {
+      setIsCheckingBooking(false);
+    }
+  };
+
   if (showReport && report) {
     const topComp = report.comparables?.[0];
     const remainingComps = report.comparables?.slice(1) ?? [];
+    const isUnlocked = bookingStatus === "confirmed";
 
     return (
       <main className="min-h-screen bg-[#F3F5F7]">
@@ -293,25 +315,70 @@ export default function ResultsSection({ place, onEditAddress }: ResultsSectionP
           />
         )}
 
-        {remainingComps.length > 0 && (
-          <LockedComparables
-            comparables={remainingComps.map((c) => ({
-              address: c.formattedAddress,
-              distanceMi: c.distance,
-              beds: c.bedrooms,
-              baths: c.bathrooms,
-              sqft: c.squareFootage,
-              price: c.price,
-              status: c.status,
-            }))}
-            medianPrice={report.marketStats?.medianPrice}
-            medianPricePerSqft={report.marketStats?.medianPricePerSquareFoot}
-          />
-        )}
+        {isUnlocked ? (
+          remainingComps.length > 0 && (
+            <section className="mx-auto mt-6 w-full max-w-[1200px] px-4 pb-8 md:px-6 xl:px-10">
+              <div className="rounded-2xl bg-white p-6 ring-1 ring-[#0B1E33]/[0.06] shadow-[0_15px_40px_-20px_rgba(11,30,51,0.2)] sm:p-8">
+                <div className="mb-5 flex items-center justify-between border-b border-[#0B1E33]/[0.06] pb-4">
+                  <span className={`${inter.className} text-[11px] font-semibold uppercase tracking-[0.14em] text-[#0B1E33]/45`}>
+                    All Comparable Sales ({remainingComps.length + 1})
+                  </span>
+                  <span className={`${inter.className} inline-flex items-center gap-1.5 rounded-full bg-[#1FAE9F]/10 px-3 py-1 text-[11px] font-semibold text-[#0E8F82]`}>
+                    Unlocked
+                  </span>
+                </div>
+                <div className="divide-y divide-[#0B1E33]/[0.06]">
+                  {remainingComps.map((c, i) => (
+                    <div key={i} className="flex items-center justify-between py-3">
+                      <div>
+                        <p className={`${inter.className} text-sm font-semibold text-[#153B5F]`}>{c.formattedAddress}</p>
+                        <p className={`${inter.className} text-xs text-[#153B5F]/50`}>
+                          {c.bedrooms} bed · {c.bathrooms} bath · {c.squareFootage.toLocaleString()} sqft
+                        </p>
+                      </div>
+                      <p className={`${inter.className} text-base font-bold text-[#153B5F]`}>
+                        {formatCurrency(c.price)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )
+        ) : (
+          <>
+            {remainingComps.length > 0 && (
+              <LockedComparables
+                comparables={remainingComps.map((c) => ({
+                  address: c.formattedAddress,
+                  distanceMi: c.distance,
+                  beds: c.bedrooms,
+                  baths: c.bathrooms,
+                  sqft: c.squareFootage,
+                  price: c.price,
+                  status: c.status,
+                }))}
+                medianPrice={report.marketStats?.medianPrice}
+                medianPricePerSqft={report.marketStats?.medianPricePerSquareFoot}
+              />
+            )}
 
-        <LockedBookingCTA
-          bookingUrl={`${process.env.NEXT_PUBLIC_GHL_BOOKING_URL}?email=${encodeURIComponent(form.email)}&name=${encodeURIComponent(form.firstName)}`}
-        />
+            <LockedBookingCTA
+              bookingUrl={`${process.env.NEXT_PUBLIC_GHL_BOOKING_URL}?email=${encodeURIComponent(form.email)}&name=${encodeURIComponent(form.firstName)}`}
+            />
+
+            <div className="mx-auto max-w-[1200px] px-4 pb-10 text-center md:px-6 xl:px-10">
+              <button
+                type="button"
+                onClick={handleCheckBookingStatus}
+                disabled={isCheckingBooking}
+                className={`${inter.className} text-sm font-medium text-[#1FAE9F] underline disabled:opacity-60`}
+              >
+                {isCheckingBooking ? "Checking..." : "Already booked? Refresh to unlock"}
+              </button>
+            </div>
+          </>
+        )}
       </main>
     );
   }
