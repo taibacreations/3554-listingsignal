@@ -22,7 +22,12 @@ function marketUpdateEmailHtml(input: {
   newValue: string;
   reportUrl: string;
 }): string {
-  const trend = input.newScore > input.previousScore ? "up" : input.newScore < input.previousScore ? "down" : "steady";
+  const trend =
+    input.newScore > input.previousScore
+      ? "up"
+      : input.newScore < input.previousScore
+        ? "down"
+        : "steady";
   const trendText =
     trend === "up"
       ? `Your Signal Score has gone up ${input.newScore - input.previousScore} points since your last report.`
@@ -99,17 +104,25 @@ export async function GET(req: NextRequest) {
   }
 
   const allLeads = await db.query.leads.findMany({
-    with: { reports: { orderBy: (r, { desc }) => [desc(r.createdAt)], limit: 1 } },
+    with: {
+      reports: { orderBy: (r, { desc }) => [desc(r.createdAt)], limit: 1 },
+    },
   });
 
-  const results: Array<{ leadId: string; status: "success" | "failed"; error?: string }> = [];
+  const results: Array<{
+    leadId: string;
+    status: "success" | "failed";
+    error?: string;
+  }> = [];
 
   for (const lead of allLeads) {
     const previousReport = lead.reports?.[0];
     if (!previousReport) continue;
 
     try {
-      const valueEstimate = await getValueEstimate(lead.address, { compCount: 20 });
+      const valueEstimate = await getValueEstimate(lead.address, {
+        compCount: 20,
+      });
       const zipCode = valueEstimate.subjectProperty?.zipCode;
       const marketStats = zipCode ? await getMarketStatistics(zipCode) : null;
 

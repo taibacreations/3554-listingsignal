@@ -3,7 +3,10 @@ import { getLeadById } from "@/lib/leads";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ leadId: string }> }) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ leadId: string }> },
+) {
   const { leadId } = await params;
 
   const lead = await getLeadById(leadId);
@@ -15,7 +18,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ lead
   const latestReport = lead.reports?.[0];
 
   if (!latestReport) {
-    return NextResponse.json({ error: "No report found for this lead." }, { status: 404 });
+    return NextResponse.json(
+      { error: "No report found for this lead." },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({
