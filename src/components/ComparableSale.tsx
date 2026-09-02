@@ -8,10 +8,10 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] }
 export interface ComparableSaleProps {
   address?: string;
   distanceMi?: number | null;
-  beds?: number;
-  baths?: number;
-  sqft?: number;
-  price?: number;
+  beds?: number | null;
+  baths?: number | null;
+  sqft?: number | null;
+  price?: number | null;
   status?: string; // "Active" | "Sold" | etc.
   daysOnMarket?: number | null;
   similarityPct?: number; // 0-100, from RentCast's `correlation`
@@ -56,9 +56,9 @@ export default function ComparableSale({
                 <h3 className={`${inter.className} text-lg font-bold text-[#153B5F] sm:text-xl`}>
                   {address}
                 </h3>
-                <p className={`${inter.className} mt-0.5 text-sm text-[#153B5F]/50`}>
+<p className={`${inter.className} mt-0.5 text-sm text-[#153B5F]/50`}>
                   {distanceMi != null ? `${distanceMi.toFixed(2)} mi away · ` : ""}
-                  {beds} bed · {baths} bath · {sqft.toLocaleString()} sqft
+                  {beds ?? "N/A"} bed · {baths ?? "N/A"} bath · {sqft != null ? `${sqft.toLocaleString()} sqft` : "N/A sqft"}
                 </p>
               </div>
 

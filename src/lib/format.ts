@@ -1,8 +1,10 @@
-export function formatCurrency(value: number): string {
+export function formatCurrency(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return "N/A";
   return `$${Math.round(value).toLocaleString("en-US")}`;
 }
 
-export function formatCurrencyShort(value: number): string {
+export function formatCurrencyShort(value: number | null | undefined): string {
+  if (value == null || Number.isNaN(value)) return "N/A";
   if (value >= 1_000_000) {
     return `$${(value / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
   }

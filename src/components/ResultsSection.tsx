@@ -124,10 +124,10 @@ interface PropertyReportResponse {
   comparables: Array<{
     formattedAddress: string;
     distance: number;
-    bedrooms: number;
-    bathrooms: number;
-    squareFootage: number;
-    price: number;
+    bedrooms: number | null;
+    bathrooms: number | null;
+    squareFootage: number | null;
+    price: number | null;
     status?: string;
     daysOnMarket?: number;
     correlation: number;
@@ -442,8 +442,10 @@ export default function ResultsSection({
                         <p
                           className={`${inter.className} text-xs text-[#153B5F]/50`}
                         >
-                          {c.bedrooms} bed · {c.bathrooms} bath ·{" "}
-                          {c.squareFootage.toLocaleString()} sqft
+                          {c.bedrooms ?? "N/A"} bed · {c.bathrooms ?? "N/A"} bath ·{" "}
+                          {c.squareFootage != null
+                            ? `${c.squareFootage.toLocaleString()} sqft`
+                            : "N/A sqft"}
                         </p>
                       </div>
                       <p

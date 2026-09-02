@@ -8,10 +8,10 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] }
 export interface LockedComparableItem {
   address: string;
   distanceMi: number | null;
-  beds: number;
-  baths: number;
-  sqft: number;
-  price: number;
+  beds: number | null;
+  baths: number | null;
+  sqft: number | null;
+  price: number | null;
   status?: string;
 }
 
@@ -50,7 +50,7 @@ export default function LockedComparables({
                 <div>
                   <p className={`${inter.className} text-sm font-semibold text-[#153B5F]`}>{comp.address}</p>
                   <p className={`${inter.className} text-xs text-[#153B5F]/50`}>
-                    {comp.beds} bed · {comp.baths} bath · {comp.sqft.toLocaleString()} sqft
+                    {comp.beds ?? "N/A"} bed · {comp.baths ?? "N/A"} bath · {comp.sqft != null ? `${comp.sqft.toLocaleString()} sqft` : "N/A sqft"}
                   </p>
                 </div>
                 <p className={`${inter.className} text-base font-bold text-[#153B5F]`}>
