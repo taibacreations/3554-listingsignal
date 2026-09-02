@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   neighborhoodValue: { fontSize: 15, fontWeight: 700, color: "#0E8F82" },
   neighborhoodLabel: { fontSize: 7, color: "#178F82", marginTop: 2, textTransform: "uppercase" },
 
-  footer: { position: "absolute", bottom: 24, left: 40, right: 40, borderTopWidth: 1, borderTopColor: BORDER, paddingTop: 10 },
+  footer: { position: "absolute", bottom: 24, left: 40, right: 40, borderTopWidth: 1, borderTopColor: BORDER, paddingTop: 10, backgroundColor: "#FFFFFF" },
   footerText: { fontSize: 7.5, color: "#9CA3AF", textAlign: "center", lineHeight: 1.5 },
 });
 
@@ -180,7 +180,9 @@ export function FullReportPdf({
           </View>
         ))}
 
-        <Text style={[styles.sectionLabel, { marginTop: 16 }]}>Neighborhood Market Summary</Text>
+        <View style={{ marginTop: 20 }} break>
+          <Text style={styles.sectionLabel}>Neighborhood Market Summary</Text>
+        </View>
         <View style={styles.neighborhoodGrid}>
           <View style={styles.neighborhoodBox}>
             <Text style={styles.neighborhoodValue}>{fmtMoney(medianPrice ?? undefined)}</Text>

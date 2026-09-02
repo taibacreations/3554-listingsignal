@@ -14,6 +14,21 @@ type SelectedPlace = {
 const Page = () => {
   const [screen, setScreen] = useState<"home" | "results">("home");
   const [place, setPlace] = useState<SelectedPlace | null>(null);
+  const [isCheckingUrl, setIsCheckingUrl] = useState(true);
+
+  // If the URL has ?leadId=... (from an email link, or a report the user
+  // bookmarked), skip straight to the results screen instead of the
+  // address-entry home screen. ResultsSection itself fetches the report
+  // data using this same leadId.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const leadId = params.get("leadId");
+    if (leadId) {
+      setPlace({ address: "", lat: null, lng: null });
+      setScreen("results");
+    }
+    setIsCheckingUrl(false);
+  }, []);
 
   const handleAddressSubmit = (p: SelectedPlace) => {
     setPlace(p);
@@ -23,6 +38,8 @@ const Page = () => {
 
   const handleEditAddress = () => {
     setScreen("home");
+    setPlace(null);
+    window.history.replaceState({}, "", window.location.pathname);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -33,6 +50,10 @@ const Page = () => {
     }, 100);
     return () => clearTimeout(timer);
   }, [screen]);
+
+  if (isCheckingUrl) {
+    return null;
+  }
 
   if (screen === "results" && place) {
     return <ResultsSection place={place} onEditAddress={handleEditAddress} />;

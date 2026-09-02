@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { leads } from "@/db/schema";
+import { leads, marketUpdateLogs } from "@/db/schema";
 import { getValueEstimate, getMarketStatistics } from "@/lib/rentcast";
 import { calculateSignalScore } from "@/lib/signal-score";
 import { createReport } from "@/lib/leads";
@@ -8,6 +8,8 @@ import { sendEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 export const maxDuration = 300; // 5 min — looping many leads + external API calls takes time
+
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 function verifyCronSecret(req: NextRequest): boolean {
   const authHeader = req.headers.get("authorization");
@@ -109,15 +111,25 @@ export async function GET(req: NextRequest) {
     },
   });
 
+  const now = Date.now();
+
   const results: Array<{
     leadId: string;
-    status: "success" | "failed";
+    status: "success" | "failed" | "skipped";
     error?: string;
   }> = [];
 
   for (const lead of allLeads) {
     const previousReport = lead.reports?.[0];
     if (!previousReport) continue;
+
+    const lastReportTime = new Date(previousReport.createdAt).getTime();
+    const daysSinceLastReport = now - lastReportTime;
+
+    if (daysSinceLastReport < THIRTY_DAYS_MS) {
+      results.push({ leadId: lead.id, status: "skipped" });
+      continue;
+    }
 
     try {
       const valueEstimate = await getValueEstimate(lead.address, {
@@ -132,7 +144,7 @@ export async function GET(req: NextRequest) {
         saleData: marketStats?.saleData,
       });
 
-      const newReport = await createReport({
+      await createReport({
         leadId: lead.id,
         estimatedValue: Math.round(valueEstimate.price),
         priceRangeLow: Math.round(valueEstimate.priceRangeLow),
@@ -163,7 +175,7 @@ export async function GET(req: NextRequest) {
         }),
       });
 
-      await db.insert((await import("@/db/schema")).marketUpdateLogs).values({
+      await db.insert(marketUpdateLogs).values({
         leadId: lead.id,
         previousScore: previousReport.signalScore,
         newScore: signal.score,
@@ -174,7 +186,7 @@ export async function GET(req: NextRequest) {
     } catch (error) {
       console.error(`Market update failed for lead ${lead.id}:`, error);
 
-      await db.insert((await import("@/db/schema")).marketUpdateLogs).values({
+      await db.insert(marketUpdateLogs).values({
         leadId: lead.id,
         status: "failed",
         errorMessage: error instanceof Error ? error.message : "Unknown error",
