@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { confirmBooking, getLeadById, getLatestLeadByEmail, savePdfRecord } from "@/lib/leads";
 import { generateFullReportPdf } from "@/lib/pdf/generate";
-import { estimateConfidence, formatConfidence } from "@/lib/format";
 import { uploadPdf } from "@/lib/storage";
 import { sendEmail, fullReportEmailHtml } from "@/lib/email";
 
@@ -52,18 +51,11 @@ export async function POST(req: NextRequest) {
     const comparables = (latestReport.comparables as Array<Record<string, unknown>>) ?? [];
     const marketStats = (latestReport.marketStats as Record<string, unknown>) ?? {};
 
-    const confidencePct = estimateConfidence(
-      latestReport.estimatedValue,
-      latestReport.priceRangeLow,
-      latestReport.priceRangeHigh,
-    );
-
     const pdfBuffer = await generateFullReportPdf({
       address: leadWithReport.address,
       estimatedValue: `$${latestReport.estimatedValue.toLocaleString()}`,
       rangeLow: `$${latestReport.priceRangeLow.toLocaleString()}`,
       rangeHigh: `$${latestReport.priceRangeHigh.toLocaleString()}`,
-      confidenceLabel: formatConfidence(confidencePct),
       signalScore: latestReport.signalScore,
       signalLabel: latestReport.signalLabel,
       bedrooms: latestReport.bedrooms ?? "N/A",

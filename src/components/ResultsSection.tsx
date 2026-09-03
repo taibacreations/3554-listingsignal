@@ -145,12 +145,12 @@ interface PropertyReportResponse {
 
 function messageForLabel(label: SignalLabel): string {
   if (label === "Strong Signal") {
-    return "The market is working in your favor. Buyer demand is high, inventory is low, and homes like yours are selling fast. This is a strong window to act.";
+    return "Buyer demand is high and homes are moving fast in your neighborhood. This is a strong window to list.";
   }
   if (label === "Steady Signal") {
-    return "Market conditions are favorable in your area. Buyer demand is active and homes are moving. Smart pricing and presentation could put you in a strong position right now.";
+    return "Your neighborhood market is active and stable. Well-positioned homes are selling at a healthy pace.";
   }
-  return "The market is building momentum in your area. Homeowners who position now often see stronger results than those who wait for peak conditions.";
+  return "Buyer activity is building in your neighborhood. Homeowners who position early often see stronger offers than those who wait.";
 }
 
 export default function ResultsSection({

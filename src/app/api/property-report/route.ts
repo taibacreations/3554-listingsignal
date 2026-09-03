@@ -4,7 +4,7 @@ import {
   getMarketStatistics,
   RentcastApiError,
 } from "@/lib/rentcast";
-import { calculateSignalScore, scoreLabel } from "@/lib/signal-score";
+import { calculateSignalScore } from "@/lib/signal-score";
 import {
   createLead,
   createReport,
@@ -15,22 +15,11 @@ import { sendLeadToGhl } from "@/lib/ghl";
 import { generatePartialReportPdf } from "@/lib/pdf/generate";
 import { uploadPdf } from "@/lib/storage";
 import { sendEmail, partialReportEmailHtml } from "@/lib/email";
-import { estimateConfidence, formatConfidence } from "@/lib/format";
 
 export const runtime = "nodejs";
 
 function formatCurrencyForPdf(value: number): string {
   return `$${Math.round(value).toLocaleString("en-US")}`;
-}
-
-function messageForLabel(label: string): string {
-  if (label === "Strong Signal") {
-    return "The market is working in your favor. Buyer demand is high, inventory is low, and homes like yours are selling fast. This is a strong window to act.";
-  }
-  if (label === "Steady Signal") {
-    return "Market conditions are favorable in your area. Buyer demand is active and homes are moving. Smart pricing and presentation could put you in a strong position right now.";
-  }
-  return "The market is building momentum in your area. Homeowners who position now often see stronger results than those who wait for peak conditions.";
 }
 
 interface RequestBody {
@@ -57,7 +46,10 @@ export async function POST(req: NextRequest) {
   const phone = body.phone?.trim();
 
   if (!address) {
-    return NextResponse.json({ error: "Address is required." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Address is required." },
+      { status: 400 },
+    );
   }
   if (!firstName || !email || !phone) {
     return NextResponse.json(
@@ -112,6 +104,7 @@ export async function POST(req: NextRequest) {
           estimated: true,
         };
 
+    // --- Persist to database ---
     const lead = await createLead({
       firstName,
       email,
@@ -139,61 +132,9 @@ export async function POST(req: NextRequest) {
       isLatest: true,
     });
 
-    // Generate + store the partial PDF first, so we have a report_url ready
-    // to include in the GHL webhook payload.
-    let partialPdfUrl: string | null = null;
-
-    const confidencePct = estimateConfidence(
-      valueEstimate.price,
-      valueEstimate.priceRangeLow,
-      valueEstimate.priceRangeHigh,
-    );
-
-    try {
-      const pdfBuffer = await generatePartialReportPdf({
-        address,
-        estimatedValue: formatCurrencyForPdf(valueEstimate.price),
-        rangeLow: formatCurrencyForPdf(valueEstimate.priceRangeLow),
-        rangeHigh: formatCurrencyForPdf(valueEstimate.priceRangeHigh),
-        confidenceLabel: formatConfidence(confidencePct),
-        signalScore: signal.score,
-        signalLabel: signal.label,
-        signalMessage: messageForLabel(signal.label),
-        bedrooms: propertyDetails.bedrooms ?? "N/A",
-        bathrooms: propertyDetails.bathrooms ?? "N/A",
-        squareFootage: propertyDetails.squareFootage
-          ? `${propertyDetails.squareFootage.toLocaleString()} sq ft`
-          : "N/A",
-        yearBuilt: propertyDetails.yearBuilt ?? "N/A",
-        detailsEstimated: propertyDetails.estimated,
-      });
-
-      const fileUrl = await uploadPdf(`reports/${lead.id}-partial.pdf`, pdfBuffer);
-
-      const pdfRecord = await savePdfRecord({
-        leadId: lead.id,
-        reportId: report.id,
-        type: "partial",
-        fileUrl,
-      });
-
-      partialPdfUrl = `${req.nextUrl.origin}/api/reports/download/${pdfRecord.id}`;
-
-      await sendEmail({
-        to: email,
-        subject: "Your Home Value Report is Ready",
-        html: partialReportEmailHtml({
-          firstName,
-          reportUrl: partialPdfUrl,
-          address,
-        }),
-      });
-    } catch (pdfError) {
-      console.error("Partial PDF generation/email failed:", pdfError);
-    }
-
-    // Fire the GHL webhook — includes report_url so the client can open the
-    // PDF directly from the GHL contact record. Never blocks the response.
+    // Fire the GHL webhook. This should never block or fail the report
+    // response — if GHL is down or misconfigured, the homeowner still
+    // gets their report; we just log the failure for follow-up.
     try {
       await sendLeadToGhl({
         leadId: lead.id,
@@ -204,11 +145,60 @@ export async function POST(req: NextRequest) {
         estimatedValue: Math.round(valueEstimate.price),
         signalScore: signal.score,
         signalTier: signal.tier,
-        reportUrl: partialPdfUrl,
       });
       await markGhlWebhookSent(lead.id);
     } catch (ghlError) {
       console.error("GHL webhook failed:", ghlError);
+    }
+
+    // Generate + store the partial PDF, then email it (email is a stub
+    // until SendGrid credentials are live — see src/lib/email.ts).
+    // The blob store is private, so we save the raw blob URL for our own
+    // records but send out a link to our own proxy route
+    // (/api/reports/download/[pdfId]) which stays stable and always works
+    // regardless of the blob's access mode.
+    try {
+      const pdfBuffer = await generatePartialReportPdf({
+        address,
+        estimatedValue: formatCurrencyForPdf(valueEstimate.price),
+        rangeLow: formatCurrencyForPdf(valueEstimate.priceRangeLow),
+        rangeHigh: formatCurrencyForPdf(valueEstimate.priceRangeHigh),
+        signalScore: signal.score,
+        signalLabel: signal.label,
+        bedrooms: propertyDetails.bedrooms ?? "N/A",
+        bathrooms: propertyDetails.bathrooms ?? "N/A",
+        squareFootage: propertyDetails.squareFootage
+          ? `${propertyDetails.squareFootage.toLocaleString()} sq ft`
+          : "N/A",
+        yearBuilt: propertyDetails.yearBuilt ?? "N/A",
+        detailsEstimated: propertyDetails.estimated,
+      });
+
+      const fileUrl = await uploadPdf(
+        `reports/${lead.id}-partial.pdf`,
+        pdfBuffer,
+      );
+
+      const pdfRecord = await savePdfRecord({
+        leadId: lead.id,
+        reportId: report.id,
+        type: "partial",
+        fileUrl,
+      });
+
+      const publicReportUrl = `${req.nextUrl.origin}/api/reports/download/${pdfRecord.id}`;
+
+      await sendEmail({
+        to: email,
+        subject: "Your Home Value Report is Ready",
+        html: partialReportEmailHtml({
+          firstName,
+          reportUrl: publicReportUrl,
+          address,
+        }),
+      });
+    } catch (pdfError) {
+      console.error("Partial PDF generation/email failed:", pdfError);
     }
 
     return NextResponse.json({
