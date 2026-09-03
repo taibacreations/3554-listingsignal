@@ -16,6 +16,7 @@ export interface GhlLeadPayload {
   estimatedValue: number;
   signalScore: number;
   signalTier: string;
+  reportUrl: string | null;
 }
 
 export class GhlWebhookError extends Error {
@@ -46,6 +47,7 @@ export async function sendLeadToGhl(payload: GhlLeadPayload): Promise<void> {
       estimatedValue: payload.estimatedValue,
       signalScore: payload.signalScore,
       signalTier: payload.signalTier,
+      report_url: payload.reportUrl ?? "",
     }),
   });
 
