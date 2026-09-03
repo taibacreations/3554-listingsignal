@@ -30,7 +30,7 @@ export async function sendEmail(input: SendEmailInput): Promise<{ sent: boolean 
   try {
     await sgMail.send({
       to: input.to,
-      from: fromEmail,
+      from: { email: fromEmail, name: "Listing Signal" },
       subject: input.subject,
       html: input.html,
     });
