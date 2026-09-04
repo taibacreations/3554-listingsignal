@@ -150,6 +150,10 @@ export async function POST(req: NextRequest) {
     );
 
     try {
+      const bookingUrl = process.env.NEXT_PUBLIC_GHL_BOOKING_URL
+        ? `${process.env.NEXT_PUBLIC_GHL_BOOKING_URL}?email=${encodeURIComponent(email)}&name=${encodeURIComponent(firstName)}`
+        : undefined;
+
       const pdfBuffer = await generatePartialReportPdf({
         address,
         estimatedValue: formatCurrencyForPdf(valueEstimate.price),
@@ -166,6 +170,7 @@ export async function POST(req: NextRequest) {
           : "N/A",
         yearBuilt: propertyDetails.yearBuilt ?? "N/A",
         detailsEstimated: propertyDetails.estimated,
+        bookingUrl,
       });
 
       const fileUrl = await uploadPdf(`reports/${lead.id}-partial.pdf`, pdfBuffer);

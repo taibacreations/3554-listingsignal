@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Svg, Path } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Svg, Path, Link } from "@react-pdf/renderer";
 
 const NAVY = "#0B1E33";
 const TEAL = "#1FAE9F";
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
     paddingVertical: 7,
     paddingHorizontal: 16,
     borderRadius: 20,
+    textDecoration: "none",
   },
 
   footer: {
@@ -184,6 +185,7 @@ export interface PartialReportPdfProps {
   squareFootage: string;
   yearBuilt: number | string;
   detailsEstimated: boolean;
+  bookingUrl?: string;
 }
 
 export function PartialReportPdf({
@@ -200,6 +202,7 @@ export function PartialReportPdf({
   squareFootage,
   yearBuilt,
   detailsEstimated,
+  bookingUrl,
 }: PartialReportPdfProps) {
   const scoreFillPct = Math.min(Math.max(signalScore, 0), 100);
   const tierStyle = tierColors(signalLabel);
@@ -298,7 +301,13 @@ export function PartialReportPdf({
           <View style={styles.ctaBox}>
             <Text style={styles.ctaText}>Book your free home visit to unlock your full report</Text>
             <Text style={styles.ctaSub}>Comparable sales, neighborhood pricing trends, and more</Text>
-            <Text style={styles.ctaPill}>Schedule Your Free Visit</Text>
+            {bookingUrl ? (
+              <Link src={bookingUrl} style={styles.ctaPill}>
+                📅 Book Your Free Home Walkthrough
+              </Link>
+            ) : (
+              <Text style={styles.ctaPill}>📅 Book Your Free Home Walkthrough</Text>
+            )}
           </View>
         </View>
 
