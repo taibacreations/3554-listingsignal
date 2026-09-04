@@ -1,4 +1,13 @@
-import { Document, Page, Text, View, StyleSheet, Svg, Path, Link } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Svg,
+  Path,
+  Link,
+} from "@react-pdf/renderer";
 
 const NAVY = "#0B1E33";
 const TEAL = "#1FAE9F";
@@ -63,7 +72,11 @@ const styles = StyleSheet.create({
     padding: 18,
     marginBottom: 14,
   },
-  cardRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  cardRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
 
   bigValue: { fontSize: 30, fontWeight: 700, color: NAVY, marginTop: 2 },
   rangeText: { fontSize: 9.5, color: GRAY_TEXT, marginTop: 6 },
@@ -103,7 +116,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scoreBarFill: { height: 7, borderRadius: 3.5, backgroundColor: TEAL },
-  scoreLegendRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 2 },
+  scoreLegendRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 2,
+  },
   scoreLegendItem: { flexDirection: "row", alignItems: "center" },
   scoreLegendDot: { width: 6, height: 6, borderRadius: 3, marginRight: 4 },
   scoreLegendText: { fontSize: 7.5, color: "#9CA3AF" },
@@ -128,8 +145,19 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   detailValue: { fontSize: 17, fontWeight: 700, color: NAVY },
-  detailLabel: { fontSize: 7.5, color: GRAY_TEXT, marginTop: 3, textTransform: "uppercase", letterSpacing: 0.4 },
-  estimatedNote: { fontSize: 8, color: ORANGE, marginTop: 10, fontStyle: "italic" },
+  detailLabel: {
+    fontSize: 7.5,
+    color: GRAY_TEXT,
+    marginTop: 3,
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  estimatedNote: {
+    fontSize: 8,
+    color: ORANGE,
+    marginTop: 10,
+    fontStyle: "italic",
+  },
 
   ctaBox: {
     marginTop: 22,
@@ -138,18 +166,30 @@ const styles = StyleSheet.create({
     padding: 22,
     alignItems: "center",
   },
-  ctaText: { color: "#FFFFFF", fontSize: 13.5, fontWeight: 700, textAlign: "center", marginBottom: 5 },
+  ctaText: {
+    color: "#FFFFFF",
+    fontSize: 13.5,
+    fontWeight: 700,
+    textAlign: "center",
+    marginBottom: 5,
+  },
   ctaSub: { color: "#9CA3AF", fontSize: 9, textAlign: "center" },
   ctaPill: {
     marginTop: 12,
     backgroundColor: TEAL,
     color: "#FFFFFF",
-    fontSize: 9.5,
+    fontSize: 10,
     fontWeight: 700,
-    paddingVertical: 7,
-    paddingHorizontal: 16,
-    borderRadius: 20,
+    paddingVertical: 9,
+    paddingHorizontal: 22,
+    borderRadius: 22,
     textDecoration: "none",
+    textAlign: "center",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  ctaPillIcon: {
+    marginRight: 7,
   },
 
   footer: {
@@ -162,7 +202,12 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     backgroundColor: "#FFFFFF",
   },
-  footerText: { fontSize: 7.5, color: "#9CA3AF", textAlign: "center", lineHeight: 1.5 },
+  footerText: {
+    fontSize: 7.5,
+    color: "#9CA3AF",
+    textAlign: "center",
+    lineHeight: 1.5,
+  },
 });
 
 function tierColors(label: string): { bg: string; text: string } {
@@ -237,9 +282,14 @@ export function PartialReportPdf({
             </View>
             <Text style={styles.bigValue}>{estimatedValue}</Text>
             <Text style={styles.rangeText}>
-              Value range: <Text style={styles.rangeStrong}>{rangeLow} - {rangeHigh}</Text>
+              Value range:{" "}
+              <Text style={styles.rangeStrong}>
+                {rangeLow} - {rangeHigh}
+              </Text>
             </Text>
-            <Text style={styles.confidenceBadge}>Confidence: {confidenceLabel}</Text>
+            <Text style={styles.confidenceBadge}>
+              Confidence: {confidenceLabel}
+            </Text>
           </View>
 
           <View style={styles.card}>
@@ -249,30 +299,47 @@ export function PartialReportPdf({
               <Text style={styles.scoreOutOf}>/ 100</Text>
             </View>
             <View style={styles.scoreBarTrack}>
-              <View style={[styles.scoreBarFill, { width: `${scoreFillPct}%` }]} />
+              <View
+                style={[styles.scoreBarFill, { width: `${scoreFillPct}%` }]}
+              />
             </View>
             <View style={styles.scoreLegendRow}>
               <View style={styles.scoreLegendItem}>
-                <View style={[styles.scoreLegendDot, { backgroundColor: ORANGE }]} />
+                <View
+                  style={[styles.scoreLegendDot, { backgroundColor: ORANGE }]}
+                />
                 <Text style={styles.scoreLegendText}>Opportunity 0-59</Text>
               </View>
               <View style={styles.scoreLegendItem}>
-                <View style={[styles.scoreLegendDot, { backgroundColor: "#1D4ED8" }]} />
+                <View
+                  style={[
+                    styles.scoreLegendDot,
+                    { backgroundColor: "#1D4ED8" },
+                  ]}
+                />
                 <Text style={styles.scoreLegendText}>Steady 60-79</Text>
               </View>
               <View style={styles.scoreLegendItem}>
-                <View style={[styles.scoreLegendDot, { backgroundColor: TEAL }]} />
+                <View
+                  style={[styles.scoreLegendDot, { backgroundColor: TEAL }]}
+                />
                 <Text style={styles.scoreLegendText}>Strong 80-100</Text>
               </View>
             </View>
-            <Text style={[styles.tierBadge, { backgroundColor: tierStyle.bg, color: tierStyle.text }]}>
+            <Text
+              style={[
+                styles.tierBadge,
+                { backgroundColor: tierStyle.bg, color: tierStyle.text },
+              ]}
+            >
               {signalLabel}
             </Text>
             <Text style={styles.tierMessage}>{signalMessage}</Text>
           </View>
 
           <Text style={styles.sectionLabel}>
-            Property Details{detailsEstimated ? " (Estimated from nearby homes)" : ""}
+            Property Details
+            {detailsEstimated ? " (Estimated from nearby homes)" : ""}
           </Text>
           <View style={styles.detailsGrid}>
             <View style={styles.detailBox}>
@@ -294,27 +361,66 @@ export function PartialReportPdf({
           </View>
           {detailsEstimated && (
             <Text style={styles.estimatedNote}>
-              Public records were unavailable for this address — details estimated from the nearest comparable home.
+              Public records were unavailable for this address — details
+              estimated from the nearest comparable home.
             </Text>
           )}
 
           <View style={styles.ctaBox}>
-            <Text style={styles.ctaText}>Book your free home visit to unlock your full report</Text>
-            <Text style={styles.ctaSub}>Comparable sales, neighborhood pricing trends, and more</Text>
+            <Text style={styles.ctaText}>
+              Book your free home visit to unlock your full report
+            </Text>
+            <Text style={styles.ctaSub}>
+              Comparable sales, neighborhood pricing trends, and more
+            </Text>
             {bookingUrl ? (
               <Link src={bookingUrl} style={styles.ctaPill}>
-                📅 Book Your Free Home Walkthrough
+                <Svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  style={styles.ctaPillIcon}
+                >
+                  <Path
+                    d="M7 2v3M17 2v3M3.5 8.5h17M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </Svg>
+                <Text>Book Your Free Home Walkthrough</Text>
               </Link>
             ) : (
-              <Text style={styles.ctaPill}>📅 Book Your Free Home Walkthrough</Text>
+              <View style={styles.ctaPill}>
+                <Svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  style={styles.ctaPillIcon}
+                >
+                  <Path
+                    d="M7 2v3M17 2v3M3.5 8.5h17M5 5h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"
+                    fill="none"
+                    stroke="#FFFFFF"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </Svg>
+                <Text>Book Your Free Home Walkthrough</Text>
+              </View>
             )}
           </View>
         </View>
 
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
-            This automated report is for informational purposes only and is not a formal appraisal.{"\n"}
-            Values are based on available market data and may vary. © {new Date().getFullYear()} Listing Signal™
+            This automated report is for informational purposes only and is not
+            a formal appraisal.{"\n"}
+            Values are based on available market data and may vary. ©{" "}
+            {new Date().getFullYear()} Listing Signal™
           </Text>
         </View>
       </Page>
