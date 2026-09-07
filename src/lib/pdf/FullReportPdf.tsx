@@ -1,4 +1,5 @@
 import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import path from "path";
 
 const NAVY = "#0B1E33";
 const TEAL = "#1FAE9F";
@@ -71,15 +72,15 @@ const styles = StyleSheet.create({
 
   tableHeader: { flexDirection: "row", backgroundColor: NAVY, borderRadius: 6, paddingVertical: 7, paddingHorizontal: 9, marginTop: 10 },
   tableHeaderText: { fontSize: 7.5, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase" },
-  tableRow: { flexDirection: "row", paddingVertical: 7, paddingHorizontal: 9, borderBottomWidth: 1, borderBottomColor: BORDER },
+  tableRow: { flexDirection: "row", alignItems: "center", paddingVertical: 8, paddingHorizontal: 9, borderBottomWidth: 1, borderBottomColor: BORDER, minHeight: 30 },
   tableRowAlt: { backgroundColor: "#FAFBFC" },
-  tableCellText: { fontSize: 8.5, color: NAVY },
+  tableCellText: { fontSize: 8, color: NAVY, lineHeight: 1.3 },
   tableCellSub: { fontSize: 7.5, color: GRAY_TEXT },
 
-  colAddress: { width: "30%" },
-  colDist: { width: "11%" },
+  colAddress: { width: "32%" },
+  colDist: { width: "10%" },
   colBeds: { width: "12%" },
-  colSqft: { width: "13%" },
+  colSqft: { width: "12%" },
   colPrice: { width: "17%" },
   colDate: { width: "17%" },
 
@@ -91,6 +92,8 @@ const styles = StyleSheet.create({
   footer: { position: "absolute", bottom: 22, left: 40, right: 40, borderTopWidth: 1, borderTopColor: BORDER, paddingTop: 10, backgroundColor: "#FFFFFF" },
   footerText: { fontSize: 7.5, color: "#9CA3AF", textAlign: "center", lineHeight: 1.5 },
 });
+
+const LOGO_PATH = path.join(process.cwd(), "public", "logo.png");
 
 function tierColors(label: string): { bg: string; text: string } {
   if (label === "Strong Signal") return { bg: TEAL_LIGHT, text: GREEN };
@@ -178,7 +181,7 @@ export function FullReportPdf({
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
-            <Image src="/logo.png" style={styles.logoImage} />
+            <Image src={LOGO_PATH} style={styles.logoImage} />
             <Text style={styles.brandText}>Listing Signal</Text>
             <Text style={styles.brandTM}>™</Text>
           </View>
@@ -276,7 +279,7 @@ export function FullReportPdf({
         <Page key={pageIdx} size="A4" style={styles.page}>
           <View style={styles.headerBand}>
             <View style={styles.headerTop}>
-              <Image src="/logo.png" style={styles.logoImage} />
+              <Image src={LOGO_PATH} style={styles.logoImage} />
               <Text style={styles.brandText}>Listing Signal</Text>
               <Text style={styles.brandTM}>™</Text>
             </View>
@@ -325,7 +328,7 @@ export function FullReportPdf({
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
-            <Image src="/logo.png" style={styles.logoImage} />
+            <Image src={LOGO_PATH} style={styles.logoImage} />
             <Text style={styles.brandText}>Listing Signal</Text>
             <Text style={styles.brandTM}>™</Text>
           </View>

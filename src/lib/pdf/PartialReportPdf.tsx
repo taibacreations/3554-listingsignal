@@ -9,6 +9,7 @@ import {
   Link,
   Image,
 } from "@react-pdf/renderer";
+import nodePath from "path";
 
 const NAVY = "#0B1E33";
 const TEAL = "#1FAE9F";
@@ -207,6 +208,8 @@ const styles = StyleSheet.create({
   },
 });
 
+const LOGO_PATH = nodePath.join(process.cwd(), "public", "logo.png");
+
 function tierColors(label: string): { bg: string; text: string } {
   if (label === "Strong Signal") return { bg: TEAL_LIGHT, text: GREEN };
   if (label === "Steady Signal") return { bg: "#EAF2FE", text: "#1D4ED8" };
@@ -254,7 +257,7 @@ export function PartialReportPdf({
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
-            <Image src="/logo.png" style={styles.logoImage} />
+            <Image src={LOGO_PATH} style={styles.logoImage} />
             <Text style={styles.brandText}>Listing Signal</Text>
             <Text style={styles.brandTM}>™</Text>
           </View>
