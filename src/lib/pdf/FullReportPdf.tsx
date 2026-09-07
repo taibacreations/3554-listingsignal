@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
   },
   headerTop: { flexDirection: "row", alignItems: "center", marginBottom: 14 },
   logoImage: {
-    width: 24,
-    height: 24,
-    marginRight: 8,
+    height: 26,
+    marginRight: 0,
+    objectFit: "contain",
   },
   brandText: { fontSize: 13, fontWeight: 700, color: "#FFFFFF" },
   brandTM: { fontSize: 7, color: "#FFFFFF", marginLeft: 2 },
@@ -182,8 +182,6 @@ export function FullReportPdf({
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
             <Image src={LOGO_PATH} style={styles.logoImage} />
-            <Text style={styles.brandText}>Listing Signal</Text>
-            <Text style={styles.brandTM}>™</Text>
           </View>
           <Text style={styles.title}>Your Full Listing Signal™ Report</Text>
           <Text style={styles.address}>{address}</Text>
@@ -280,8 +278,6 @@ export function FullReportPdf({
           <View style={styles.headerBand}>
             <View style={styles.headerTop}>
               <Image src={LOGO_PATH} style={styles.logoImage} />
-              <Text style={styles.brandText}>Listing Signal</Text>
-              <Text style={styles.brandTM}>™</Text>
             </View>
             <Text style={styles.title}>Comparable Sales (continued)</Text>
             <Text style={styles.address}>{address}</Text>
@@ -329,8 +325,6 @@ export function FullReportPdf({
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
             <Image src={LOGO_PATH} style={styles.logoImage} />
-            <Text style={styles.brandText}>Listing Signal</Text>
-            <Text style={styles.brandTM}>™</Text>
           </View>
           <Text style={styles.title}>Neighborhood Market Summary</Text>
           <Text style={styles.address}>{address}</Text>

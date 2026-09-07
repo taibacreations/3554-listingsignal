@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
   },
   headerTop: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
   logoImage: {
-    width: 26,
-    height: 26,
-    marginRight: 9,
+    height: 30,
+    marginRight: 0,
+    objectFit: "contain",
   },
   brandText: { fontSize: 14, fontWeight: 700, color: "#FFFFFF" },
   brandTM: { fontSize: 8, color: "#FFFFFF", marginLeft: 2 },
@@ -258,8 +258,6 @@ export function PartialReportPdf({
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
             <Image src={LOGO_PATH} style={styles.logoImage} />
-            <Text style={styles.brandText}>Listing Signal</Text>
-            <Text style={styles.brandTM}>™</Text>
           </View>
           <Text style={styles.title}>Your Listing Signal™ Report</Text>
           <Text style={styles.address}>{address}</Text>
