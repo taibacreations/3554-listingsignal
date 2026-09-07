@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, Svg, Path } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
 
 const NAVY = "#0B1E33";
 const TEAL = "#1FAE9F";
@@ -29,14 +29,10 @@ const styles = StyleSheet.create({
     marginBottom: 22,
   },
   headerTop: { flexDirection: "row", alignItems: "center", marginBottom: 14 },
-  logoMark: {
-    width: 22,
-    height: 22,
-    borderRadius: 6,
-    backgroundColor: TEAL,
+  logoImage: {
+    width: 24,
+    height: 24,
     marginRight: 8,
-    alignItems: "center",
-    justifyContent: "center",
   },
   brandText: { fontSize: 13, fontWeight: 700, color: "#FFFFFF" },
   brandTM: { fontSize: 7, color: "#FFFFFF", marginLeft: 2 },
@@ -80,11 +76,12 @@ const styles = StyleSheet.create({
   tableCellText: { fontSize: 8.5, color: NAVY },
   tableCellSub: { fontSize: 7.5, color: GRAY_TEXT },
 
-  colAddress: { width: "36%" },
-  colDist: { width: "13%" },
-  colBeds: { width: "15%" },
-  colSqft: { width: "16%" },
-  colPrice: { width: "20%" },
+  colAddress: { width: "30%" },
+  colDist: { width: "11%" },
+  colBeds: { width: "12%" },
+  colSqft: { width: "13%" },
+  colPrice: { width: "17%" },
+  colDate: { width: "17%" },
 
   neighborhoodGrid: { flexDirection: "row", gap: 10, marginTop: 10 },
   neighborhoodBox: { flex: 1, backgroundColor: TEAL_LIGHT, borderRadius: 8, padding: 12 },
@@ -108,6 +105,9 @@ interface ComparableRow {
   bathrooms?: number;
   squareFootage?: number;
   price?: number;
+  listedDate?: string;
+  removedDate?: string | null;
+  lastSeenDate?: string;
 }
 
 export interface FullReportPdfProps {
@@ -131,6 +131,14 @@ export interface FullReportPdfProps {
 function fmtMoney(value?: number | null): string {
   if (value == null) return "-";
   return `$${Math.round(value).toLocaleString()}`;
+}
+
+function fmtSaleDate(comp: ComparableRow): string {
+  const dateStr = comp.removedDate ?? comp.lastSeenDate ?? comp.listedDate;
+  if (!dateStr) return "-";
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return "-";
+  return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
 // Comps are split into pages of this size so the table never collides with
@@ -170,16 +178,7 @@ export function FullReportPdf({
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
-            <View style={styles.logoMark}>
-              <Svg width="12" height="12" viewBox="0 0 24 24">
-                <Path
-                  d="M3 11.5L12 4l9 7.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth={2}
-                />
-              </Svg>
-            </View>
+            <Image src="/logo.png" style={styles.logoImage} />
             <Text style={styles.brandText}>Listing Signal</Text>
             <Text style={styles.brandTM}>™</Text>
           </View>
@@ -242,6 +241,7 @@ export function FullReportPdf({
                 <Text style={[styles.tableHeaderText, styles.colBeds]}>Bed/Bath</Text>
                 <Text style={[styles.tableHeaderText, styles.colSqft]}>Sq Ft</Text>
                 <Text style={[styles.tableHeaderText, styles.colPrice]}>Price</Text>
+                <Text style={[styles.tableHeaderText, styles.colDate]}>Sale Date</Text>
               </View>
               {compPages[0].map((c, i) => (
                 <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
@@ -256,6 +256,7 @@ export function FullReportPdf({
                     {c.squareFootage != null ? c.squareFootage.toLocaleString() : "-"}
                   </Text>
                   <Text style={[styles.tableCellText, styles.colPrice]}>{fmtMoney(c.price)}</Text>
+                  <Text style={[styles.tableCellSub, styles.colDate]}>{fmtSaleDate(c)}</Text>
                 </View>
               ))}
             </>
@@ -275,16 +276,7 @@ export function FullReportPdf({
         <Page key={pageIdx} size="A4" style={styles.page}>
           <View style={styles.headerBand}>
             <View style={styles.headerTop}>
-              <View style={styles.logoMark}>
-                <Svg width="12" height="12" viewBox="0 0 24 24">
-                  <Path
-                    d="M3 11.5L12 4l9 7.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
-                    fill="none"
-                    stroke="#FFFFFF"
-                    strokeWidth={2}
-                  />
-                </Svg>
-              </View>
+              <Image src="/logo.png" style={styles.logoImage} />
               <Text style={styles.brandText}>Listing Signal</Text>
               <Text style={styles.brandTM}>™</Text>
             </View>
@@ -299,6 +291,7 @@ export function FullReportPdf({
               <Text style={[styles.tableHeaderText, styles.colBeds]}>Bed/Bath</Text>
               <Text style={[styles.tableHeaderText, styles.colSqft]}>Sq Ft</Text>
               <Text style={[styles.tableHeaderText, styles.colPrice]}>Price</Text>
+              <Text style={[styles.tableHeaderText, styles.colDate]}>Sale Date</Text>
             </View>
             {pageComps.map((c, i) => (
               <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
@@ -313,6 +306,7 @@ export function FullReportPdf({
                   {c.squareFootage != null ? c.squareFootage.toLocaleString() : "-"}
                 </Text>
                 <Text style={[styles.tableCellText, styles.colPrice]}>{fmtMoney(c.price)}</Text>
+                <Text style={[styles.tableCellSub, styles.colDate]}>{fmtSaleDate(c)}</Text>
               </View>
             ))}
           </View>
@@ -331,16 +325,7 @@ export function FullReportPdf({
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
-            <View style={styles.logoMark}>
-              <Svg width="12" height="12" viewBox="0 0 24 24">
-                <Path
-                  d="M3 11.5L12 4l9 7.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth={2}
-                />
-              </Svg>
-            </View>
+            <Image src="/logo.png" style={styles.logoImage} />
             <Text style={styles.brandText}>Listing Signal</Text>
             <Text style={styles.brandTM}>™</Text>
           </View>

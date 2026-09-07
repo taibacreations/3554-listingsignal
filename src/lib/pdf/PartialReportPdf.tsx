@@ -7,6 +7,7 @@ import {
   Svg,
   Path,
   Link,
+  Image,
 } from "@react-pdf/renderer";
 
 const NAVY = "#0B1E33";
@@ -40,14 +41,10 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   headerTop: { flexDirection: "row", alignItems: "center", marginBottom: 16 },
-  logoMark: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    backgroundColor: TEAL,
+  logoImage: {
+    width: 26,
+    height: 26,
     marginRight: 9,
-    alignItems: "center",
-    justifyContent: "center",
   },
   brandText: { fontSize: 14, fontWeight: 700, color: "#FFFFFF" },
   brandTM: { fontSize: 8, color: "#FFFFFF", marginLeft: 2 },
@@ -257,16 +254,7 @@ export function PartialReportPdf({
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
-            <View style={styles.logoMark}>
-              <Svg width="13" height="13" viewBox="0 0 24 24">
-                <Path
-                  d="M3 11.5L12 4l9 7.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"
-                  fill="none"
-                  stroke="#FFFFFF"
-                  strokeWidth={2}
-                />
-              </Svg>
-            </View>
+            <Image src="/logo.png" style={styles.logoImage} />
             <Text style={styles.brandText}>Listing Signal</Text>
             <Text style={styles.brandTM}>™</Text>
           </View>
