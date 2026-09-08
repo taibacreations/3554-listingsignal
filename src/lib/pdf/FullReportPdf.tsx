@@ -1,4 +1,11 @@
-import { Document, Page, Text, View, StyleSheet, Image } from "@react-pdf/renderer";
+import {
+  Document,
+  Page,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+} from "@react-pdf/renderer";
 import path from "path";
 
 const NAVY = "#0B1E33";
@@ -40,10 +47,28 @@ const styles = StyleSheet.create({
   title: { fontSize: 19, fontWeight: 700, color: "#FFFFFF", marginBottom: 4 },
   address: { fontSize: 10.5, color: "#B9C4D0" },
 
-  sectionLabel: { fontSize: 8.5, fontWeight: 700, color: GRAY_TEXT, textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 8 },
+  sectionLabel: {
+    fontSize: 8.5,
+    fontWeight: 700,
+    color: GRAY_TEXT,
+    textTransform: "uppercase",
+    letterSpacing: 0.8,
+    marginBottom: 8,
+  },
 
-  card: { backgroundColor: GRAY_BG, borderRadius: 10, borderWidth: 1, borderColor: BORDER, padding: 16, marginBottom: 12 },
-  cardRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start" },
+  card: {
+    backgroundColor: GRAY_BG,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: BORDER,
+    padding: 16,
+    marginBottom: 12,
+  },
+  cardRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
   bigValue: { fontSize: 24, fontWeight: 700, color: NAVY },
   rangeText: { fontSize: 9, color: GRAY_TEXT, marginTop: 4 },
   rangeStrong: { color: NAVY, fontWeight: 700 },
@@ -58,39 +83,110 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 8,
   },
-  trendBadge: { backgroundColor: TEAL_LIGHT, color: GREEN, fontSize: 8, fontWeight: 700, paddingVertical: 4, paddingHorizontal: 9, borderRadius: 9 },
+  trendBadge: {
+    backgroundColor: TEAL_LIGHT,
+    color: GREEN,
+    fontSize: 8,
+    fontWeight: 700,
+    paddingVertical: 4,
+    paddingHorizontal: 9,
+    borderRadius: 9,
+  },
 
   scoreRow: { flexDirection: "row", alignItems: "baseline" },
   scoreValue: { fontSize: 26, fontWeight: 700, color: TEAL },
   scoreOutOf: { fontSize: 11, color: "#9CA3AF", marginLeft: 4 },
-  tierBadge: { alignSelf: "flex-start", fontSize: 9, fontWeight: 700, paddingVertical: 5, paddingHorizontal: 11, borderRadius: 10, marginTop: 8 },
+  tierBadge: {
+    alignSelf: "flex-start",
+    fontSize: 9,
+    fontWeight: 700,
+    paddingVertical: 5,
+    paddingHorizontal: 11,
+    borderRadius: 10,
+    marginTop: 8,
+  },
 
   detailsGrid: { flexDirection: "row", gap: 8 },
-  detailBox: { flex: 1, backgroundColor: GRAY_BG, borderRadius: 8, borderWidth: 1, borderColor: BORDER, padding: 10 },
+  detailBox: {
+    flex: 1,
+    backgroundColor: GRAY_BG,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: BORDER,
+    padding: 10,
+  },
   detailValue: { fontSize: 15, fontWeight: 700, color: NAVY },
-  detailLabel: { fontSize: 7, color: GRAY_TEXT, marginTop: 2, textTransform: "uppercase" },
+  detailLabel: {
+    fontSize: 7,
+    color: GRAY_TEXT,
+    marginTop: 2,
+    textTransform: "uppercase",
+  },
 
-  tableHeader: { flexDirection: "row", backgroundColor: NAVY, borderRadius: 6, paddingVertical: 7, paddingHorizontal: 9, marginTop: 10 },
-  tableHeaderText: { fontSize: 7.5, fontWeight: 700, color: "#FFFFFF", textTransform: "uppercase" },
-  tableRow: { flexDirection: "row", alignItems: "center", paddingVertical: 8, paddingHorizontal: 9, borderBottomWidth: 1, borderBottomColor: BORDER, minHeight: 30 },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: NAVY,
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginTop: 10,
+  },
+  tableHeaderText: {
+    fontSize: 7,
+    fontWeight: 700,
+    color: "#FFFFFF",
+    textTransform: "uppercase",
+  },
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    paddingVertical: 9,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER,
+  },
   tableRowAlt: { backgroundColor: "#FAFBFC" },
-  tableCellText: { fontSize: 8, color: NAVY, lineHeight: 1.3 },
-  tableCellSub: { fontSize: 7.5, color: GRAY_TEXT },
+  tableCellText: { fontSize: 8, color: NAVY, lineHeight: 1.35 },
+  tableCellSub: { fontSize: 7.5, color: GRAY_TEXT, lineHeight: 1.35 },
 
-  colAddress: { width: "32%" },
-  colDist: { width: "10%" },
-  colBeds: { width: "12%" },
+  colAddress: { width: "34%", paddingRight: 6 },
+  colDist: { width: "11%" },
+  colBeds: { width: "13%" },
   colSqft: { width: "12%" },
-  colPrice: { width: "17%" },
-  colDate: { width: "17%" },
+  colPrice: { width: "15%" },
+  colDate: { width: "15%" },
 
   neighborhoodGrid: { flexDirection: "row", gap: 10, marginTop: 10 },
-  neighborhoodBox: { flex: 1, backgroundColor: TEAL_LIGHT, borderRadius: 8, padding: 12 },
+  neighborhoodBox: {
+    flex: 1,
+    backgroundColor: TEAL_LIGHT,
+    borderRadius: 8,
+    padding: 12,
+  },
   neighborhoodValue: { fontSize: 15, fontWeight: 700, color: GREEN },
-  neighborhoodLabel: { fontSize: 7, color: GREEN, marginTop: 2, textTransform: "uppercase" },
+  neighborhoodLabel: {
+    fontSize: 7,
+    color: GREEN,
+    marginTop: 2,
+    textTransform: "uppercase",
+  },
 
-  footer: { position: "absolute", bottom: 22, left: 40, right: 40, borderTopWidth: 1, borderTopColor: BORDER, paddingTop: 10, backgroundColor: "#FFFFFF" },
-  footerText: { fontSize: 7.5, color: "#9CA3AF", textAlign: "center", lineHeight: 1.5 },
+  footer: {
+    position: "absolute",
+    bottom: 22,
+    left: 40,
+    right: 40,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+    paddingTop: 10,
+    backgroundColor: "#FFFFFF",
+  },
+  footerText: {
+    fontSize: 7.5,
+    color: "#9CA3AF",
+    textAlign: "center",
+    lineHeight: 1.5,
+  },
 });
 
 const LOGO_PATH = path.join(process.cwd(), "public", "logo.png");
@@ -195,9 +291,14 @@ export function FullReportPdf({
             </View>
             <Text style={styles.bigValue}>{estimatedValue}</Text>
             <Text style={styles.rangeText}>
-              Value range: <Text style={styles.rangeStrong}>{rangeLow} - {rangeHigh}</Text>
+              Value range:{" "}
+              <Text style={styles.rangeStrong}>
+                {rangeLow} - {rangeHigh}
+              </Text>
             </Text>
-            <Text style={styles.confidenceBadge}>Confidence: {confidenceLabel}</Text>
+            <Text style={styles.confidenceBadge}>
+              Confidence: {confidenceLabel}
+            </Text>
           </View>
 
           <View style={styles.card}>
@@ -206,7 +307,12 @@ export function FullReportPdf({
               <Text style={styles.scoreValue}>{signalScore}</Text>
               <Text style={styles.scoreOutOf}>/ 100</Text>
             </View>
-            <Text style={[styles.tierBadge, { backgroundColor: tierStyle.bg, color: tierStyle.text }]}>
+            <Text
+              style={[
+                styles.tierBadge,
+                { backgroundColor: tierStyle.bg, color: tierStyle.text },
+              ]}
+            >
               {signalLabel}
             </Text>
           </View>
@@ -237,27 +343,64 @@ export function FullReportPdf({
                 Comparable Sales ({comparables.length})
               </Text>
               <View style={styles.tableHeader}>
-                <Text style={[styles.tableHeaderText, styles.colAddress]}>Address</Text>
-                <Text style={[styles.tableHeaderText, styles.colDist]}>Dist.</Text>
-                <Text style={[styles.tableHeaderText, styles.colBeds]}>Bed/Bath</Text>
-                <Text style={[styles.tableHeaderText, styles.colSqft]}>Sq Ft</Text>
-                <Text style={[styles.tableHeaderText, styles.colPrice]}>Price</Text>
-                <Text style={[styles.tableHeaderText, styles.colDate]}>Sale Date</Text>
+                <View style={styles.colAddress}>
+                  <Text style={styles.tableHeaderText}>Address</Text>
+                </View>
+                <View style={styles.colDist}>
+                  <Text style={styles.tableHeaderText}>Dist.</Text>
+                </View>
+                <View style={styles.colBeds}>
+                  <Text style={styles.tableHeaderText}>Bed/Bath</Text>
+                </View>
+                <View style={styles.colSqft}>
+                  <Text style={styles.tableHeaderText}>Sq Ft</Text>
+                </View>
+                <View style={styles.colPrice}>
+                  <Text style={styles.tableHeaderText}>Price</Text>
+                </View>
+                <View style={styles.colDate}>
+                  <Text style={styles.tableHeaderText}>Sale Date</Text>
+                </View>
               </View>
               {compPages[0].map((c, i) => (
-                <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                  <Text style={[styles.tableCellText, styles.colAddress]}>{c.formattedAddress ?? "-"}</Text>
-                  <Text style={[styles.tableCellSub, styles.colDist]}>
-                    {c.distance != null ? `${c.distance.toFixed(2)} mi` : "-"}
-                  </Text>
-                  <Text style={[styles.tableCellSub, styles.colBeds]}>
-                    {c.bedrooms ?? "-"}/{c.bathrooms ?? "-"}
-                  </Text>
-                  <Text style={[styles.tableCellSub, styles.colSqft]}>
-                    {c.squareFootage != null ? c.squareFootage.toLocaleString() : "-"}
-                  </Text>
-                  <Text style={[styles.tableCellText, styles.colPrice]}>{fmtMoney(c.price)}</Text>
-                  <Text style={[styles.tableCellSub, styles.colDate]}>{fmtSaleDate(c)}</Text>
+                <View
+                  key={i}
+                  wrap={false}
+                  style={[
+                    styles.tableRow,
+                    i % 2 === 1 ? styles.tableRowAlt : {},
+                  ]}
+                >
+                  <View style={styles.colAddress}>
+                    <Text style={styles.tableCellText}>
+                      {c.formattedAddress ?? "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.colDist}>
+                    <Text style={styles.tableCellSub}>
+                      {c.distance != null ? `${c.distance.toFixed(2)} mi` : "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.colBeds}>
+                    <Text style={styles.tableCellSub}>
+                      {c.bedrooms ?? "-"}/{c.bathrooms ?? "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.colSqft}>
+                    <Text style={styles.tableCellSub}>
+                      {c.squareFootage != null
+                        ? c.squareFootage.toLocaleString()
+                        : "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.colPrice}>
+                    <Text style={styles.tableCellText}>
+                      {fmtMoney(c.price)}
+                    </Text>
+                  </View>
+                  <View style={styles.colDate}>
+                    <Text style={styles.tableCellSub}>{fmtSaleDate(c)}</Text>
+                  </View>
                 </View>
               ))}
             </>
@@ -266,8 +409,9 @@ export function FullReportPdf({
 
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
-            This automated report is for informational purposes only and is not a formal appraisal.{"\n"}
-            © {new Date().getFullYear()} Listing Signal™
+            This automated report is for informational purposes only and is not
+            a formal appraisal.{"\n"}© {new Date().getFullYear()} Listing
+            Signal™
           </Text>
         </View>
       </Page>
@@ -285,35 +429,68 @@ export function FullReportPdf({
 
           <View style={styles.content}>
             <View style={styles.tableHeader}>
-              <Text style={[styles.tableHeaderText, styles.colAddress]}>Address</Text>
-              <Text style={[styles.tableHeaderText, styles.colDist]}>Dist.</Text>
-              <Text style={[styles.tableHeaderText, styles.colBeds]}>Bed/Bath</Text>
-              <Text style={[styles.tableHeaderText, styles.colSqft]}>Sq Ft</Text>
-              <Text style={[styles.tableHeaderText, styles.colPrice]}>Price</Text>
-              <Text style={[styles.tableHeaderText, styles.colDate]}>Sale Date</Text>
+              <View style={styles.colAddress}>
+                <Text style={styles.tableHeaderText}>Address</Text>
+              </View>
+              <View style={styles.colDist}>
+                <Text style={styles.tableHeaderText}>Dist.</Text>
+              </View>
+              <View style={styles.colBeds}>
+                <Text style={styles.tableHeaderText}>Bed/Bath</Text>
+              </View>
+              <View style={styles.colSqft}>
+                <Text style={styles.tableHeaderText}>Sq Ft</Text>
+              </View>
+              <View style={styles.colPrice}>
+                <Text style={styles.tableHeaderText}>Price</Text>
+              </View>
+              <View style={styles.colDate}>
+                <Text style={styles.tableHeaderText}>Sale Date</Text>
+              </View>
             </View>
             {pageComps.map((c, i) => (
-              <View key={i} style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}>
-                <Text style={[styles.tableCellText, styles.colAddress]}>{c.formattedAddress ?? "-"}</Text>
-                <Text style={[styles.tableCellSub, styles.colDist]}>
-                  {c.distance != null ? `${c.distance.toFixed(2)} mi` : "-"}
-                </Text>
-                <Text style={[styles.tableCellSub, styles.colBeds]}>
-                  {c.bedrooms ?? "-"}/{c.bathrooms ?? "-"}
-                </Text>
-                <Text style={[styles.tableCellSub, styles.colSqft]}>
-                  {c.squareFootage != null ? c.squareFootage.toLocaleString() : "-"}
-                </Text>
-                <Text style={[styles.tableCellText, styles.colPrice]}>{fmtMoney(c.price)}</Text>
-                <Text style={[styles.tableCellSub, styles.colDate]}>{fmtSaleDate(c)}</Text>
+              <View
+                key={i}
+                wrap={false}
+                style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}
+              >
+                <View style={styles.colAddress}>
+                  <Text style={styles.tableCellText}>
+                    {c.formattedAddress ?? "-"}
+                  </Text>
+                </View>
+                <View style={styles.colDist}>
+                  <Text style={styles.tableCellSub}>
+                    {c.distance != null ? `${c.distance.toFixed(2)} mi` : "-"}
+                  </Text>
+                </View>
+                <View style={styles.colBeds}>
+                  <Text style={styles.tableCellSub}>
+                    {c.bedrooms ?? "-"}/{c.bathrooms ?? "-"}
+                  </Text>
+                </View>
+                <View style={styles.colSqft}>
+                  <Text style={styles.tableCellSub}>
+                    {c.squareFootage != null
+                      ? c.squareFootage.toLocaleString()
+                      : "-"}
+                  </Text>
+                </View>
+                <View style={styles.colPrice}>
+                  <Text style={styles.tableCellText}>{fmtMoney(c.price)}</Text>
+                </View>
+                <View style={styles.colDate}>
+                  <Text style={styles.tableCellSub}>{fmtSaleDate(c)}</Text>
+                </View>
               </View>
             ))}
           </View>
 
           <View style={styles.footer} fixed>
             <Text style={styles.footerText}>
-              This automated report is for informational purposes only and is not a formal appraisal.{"\n"}
-              © {new Date().getFullYear()} Listing Signal™
+              This automated report is for informational purposes only and is
+              not a formal appraisal.{"\n"}© {new Date().getFullYear()} Listing
+              Signal™
             </Text>
           </View>
         </Page>
@@ -333,28 +510,37 @@ export function FullReportPdf({
         <View style={styles.content}>
           <View style={styles.neighborhoodGrid}>
             <View style={styles.neighborhoodBox}>
-              <Text style={styles.neighborhoodValue}>{fmtMoney(medianPrice)}</Text>
+              <Text style={styles.neighborhoodValue}>
+                {fmtMoney(medianPrice)}
+              </Text>
               <Text style={styles.neighborhoodLabel}>Median Sale Price</Text>
             </View>
             <View style={styles.neighborhoodBox}>
               <Text style={styles.neighborhoodValue}>
-                {medianPricePerSqft ? `$${Math.round(medianPricePerSqft)}` : "-"}
+                {medianPricePerSqft
+                  ? `$${Math.round(medianPricePerSqft)}`
+                  : "-"}
               </Text>
               <Text style={styles.neighborhoodLabel}>Median $/SqFt</Text>
             </View>
             <View style={styles.neighborhoodBox}>
               <Text style={styles.neighborhoodValue}>
-                {medianDaysOnMarket != null ? `${medianDaysOnMarket} days` : "-"}
+                {medianDaysOnMarket != null
+                  ? `${medianDaysOnMarket} days`
+                  : "-"}
               </Text>
-              <Text style={styles.neighborhoodLabel}>Median Days on Market</Text>
+              <Text style={styles.neighborhoodLabel}>
+                Median Days on Market
+              </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
-            This automated report is for informational purposes only and is not a formal appraisal.{"\n"}
-            © {new Date().getFullYear()} Listing Signal™
+            This automated report is for informational purposes only and is not
+            a formal appraisal.{"\n"}© {new Date().getFullYear()} Listing
+            Signal™
           </Text>
         </View>
       </Page>
