@@ -258,10 +258,10 @@ function fmtSaleDate(comp: ComparableRow): string {
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-// Show only the most recent sales, capped at 10, so the whole report
-// (comps + neighborhood summary) fits on a single page like the client's
-// reference PDF — no multi-page pagination needed.
-const MAX_COMPS = 10;
+// Show only the most recent sales, capped at 8, so the whole report
+// (comps + neighborhood summary) fits comfortably on a single page like
+// the client's reference PDF — no multi-page pagination needed.
+const MAX_COMPS = 8;
 
 function mostRecentComps(comparables: ComparableRow[]): ComparableRow[] {
   return [...comparables]
