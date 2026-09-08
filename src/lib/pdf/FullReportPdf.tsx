@@ -17,6 +17,8 @@ const BORDER = "#E5E7EB";
 const ORANGE = "#D97706";
 const ORANGE_LIGHT = "#FEF3E2";
 const GREEN = "#178F82";
+const BLUE = "#1D4ED8";
+const BLUE_LIGHT = "#EAF2FE";
 
 const styles = StyleSheet.create({
   page: {
@@ -32,92 +34,89 @@ const styles = StyleSheet.create({
   headerBand: {
     backgroundColor: NAVY,
     paddingHorizontal: 40,
-    paddingTop: 28,
-    paddingBottom: 24,
-    marginBottom: 22,
+    paddingTop: 26,
+    paddingBottom: 20,
+    marginBottom: 18,
   },
-  headerTop: { flexDirection: "row", alignItems: "center", marginBottom: 14 },
+  headerTop: { flexDirection: "row", alignItems: "center", marginBottom: 12 },
   logoImage: {
-    height: 26,
-    marginRight: 0,
+    height: 24,
     objectFit: "contain",
   },
-  brandText: { fontSize: 13, fontWeight: 700, color: "#FFFFFF" },
-  brandTM: { fontSize: 7, color: "#FFFFFF", marginLeft: 2 },
-  title: { fontSize: 19, fontWeight: 700, color: "#FFFFFF", marginBottom: 4 },
-  address: { fontSize: 10.5, color: "#B9C4D0" },
+  title: { fontSize: 18, fontWeight: 700, color: "#FFFFFF", marginBottom: 4 },
+  address: { fontSize: 10, color: "#B9C4D0" },
 
   sectionLabel: {
-    fontSize: 8.5,
+    fontSize: 8,
     fontWeight: 700,
     color: GRAY_TEXT,
     textTransform: "uppercase",
     letterSpacing: 0.8,
-    marginBottom: 8,
+    marginBottom: 7,
   },
 
   card: {
     backgroundColor: GRAY_BG,
-    borderRadius: 10,
+    borderRadius: 9,
     borderWidth: 1,
     borderColor: BORDER,
-    padding: 16,
-    marginBottom: 12,
+    padding: 13,
+    marginBottom: 10,
   },
   cardRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
   },
-  bigValue: { fontSize: 24, fontWeight: 700, color: NAVY },
-  rangeText: { fontSize: 9, color: GRAY_TEXT, marginTop: 4 },
+  bigValue: { fontSize: 21, fontWeight: 700, color: NAVY },
+  rangeText: { fontSize: 8.5, color: GRAY_TEXT, marginTop: 3 },
   rangeStrong: { color: NAVY, fontWeight: 700 },
   confidenceBadge: {
     alignSelf: "flex-start",
     backgroundColor: TEAL_LIGHT,
     color: GREEN,
-    fontSize: 8.5,
+    fontSize: 8,
     fontWeight: 700,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 10,
-    marginTop: 8,
+    paddingVertical: 3,
+    paddingHorizontal: 9,
+    borderRadius: 9,
+    marginTop: 7,
   },
   trendBadge: {
     backgroundColor: TEAL_LIGHT,
     color: GREEN,
-    fontSize: 8,
+    fontSize: 7.5,
     fontWeight: 700,
-    paddingVertical: 4,
-    paddingHorizontal: 9,
-    borderRadius: 9,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
+    borderRadius: 8,
   },
 
   scoreRow: { flexDirection: "row", alignItems: "baseline" },
-  scoreValue: { fontSize: 26, fontWeight: 700, color: TEAL },
-  scoreOutOf: { fontSize: 11, color: "#9CA3AF", marginLeft: 4 },
+  scoreValue: { fontSize: 22, fontWeight: 700, color: TEAL },
+  scoreOutOf: { fontSize: 10, color: "#9CA3AF", marginLeft: 4 },
   tierBadge: {
     alignSelf: "flex-start",
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: 700,
-    paddingVertical: 5,
-    paddingHorizontal: 11,
-    borderRadius: 10,
-    marginTop: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 9,
+    marginTop: 7,
   },
 
-  detailsGrid: { flexDirection: "row", gap: 8 },
+  detailsGrid: { flexDirection: "row", gap: 7 },
   detailBox: {
     flex: 1,
     backgroundColor: GRAY_BG,
-    borderRadius: 8,
+    borderRadius: 7,
     borderWidth: 1,
     borderColor: BORDER,
-    padding: 10,
+    padding: 8,
   },
-  detailValue: { fontSize: 15, fontWeight: 700, color: NAVY },
+  detailValue: { fontSize: 13, fontWeight: 700, color: NAVY },
   detailLabel: {
-    fontSize: 7,
+    fontSize: 6.5,
     color: GRAY_TEXT,
     marginTop: 2,
     textTransform: "uppercase",
@@ -126,13 +125,13 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: "row",
     backgroundColor: NAVY,
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    marginTop: 10,
+    borderRadius: 5,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    marginTop: 8,
   },
   tableHeaderText: {
-    fontSize: 7,
+    fontSize: 6.5,
     fontWeight: 700,
     color: "#FFFFFF",
     textTransform: "uppercase",
@@ -140,14 +139,14 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: "row",
     alignItems: "flex-start",
-    paddingVertical: 9,
-    paddingHorizontal: 10,
+    paddingVertical: 6.5,
+    paddingHorizontal: 8,
     borderBottomWidth: 1,
     borderBottomColor: BORDER,
   },
   tableRowAlt: { backgroundColor: "#FAFBFC" },
-  tableCellText: { fontSize: 8, color: NAVY, lineHeight: 1.35 },
-  tableCellSub: { fontSize: 7.5, color: GRAY_TEXT, lineHeight: 1.35 },
+  tableCellText: { fontSize: 7.3, color: NAVY, lineHeight: 1.3 },
+  tableCellSub: { fontSize: 6.8, color: GRAY_TEXT, lineHeight: 1.3 },
 
   colAddress: { width: "34%", paddingRight: 6 },
   colDist: { width: "11%" },
@@ -156,36 +155,50 @@ const styles = StyleSheet.create({
   colPrice: { width: "15%" },
   colDate: { width: "15%" },
 
-  neighborhoodGrid: { flexDirection: "row", gap: 10, marginTop: 10 },
+  neighborhoodGrid: { flexDirection: "row", gap: 8, marginTop: 10 },
   neighborhoodBox: {
     flex: 1,
     backgroundColor: TEAL_LIGHT,
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 7,
+    padding: 10,
   },
-  neighborhoodValue: { fontSize: 15, fontWeight: 700, color: GREEN },
+  neighborhoodValue: { fontSize: 13, fontWeight: 700, color: GREEN },
   neighborhoodLabel: {
-    fontSize: 7,
+    fontSize: 6.5,
     color: GREEN,
     marginTop: 2,
     textTransform: "uppercase",
   },
 
+  legendRow: {
+    flexDirection: "row",
+    gap: 14,
+    marginTop: 12,
+    paddingTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
+  },
+  legendItem: { flex: 1 },
+  legendHeader: { flexDirection: "row", alignItems: "center", marginBottom: 2 },
+  legendDot: { width: 6, height: 6, borderRadius: 3, marginRight: 5 },
+  legendTitle: { fontSize: 7.5, fontWeight: 700, color: NAVY },
+  legendDesc: { fontSize: 6.8, color: GRAY_TEXT, lineHeight: 1.3 },
+
   footer: {
     position: "absolute",
-    bottom: 22,
+    bottom: 20,
     left: 40,
     right: 40,
     borderTopWidth: 1,
     borderTopColor: BORDER,
-    paddingTop: 10,
+    paddingTop: 8,
     backgroundColor: "#FFFFFF",
   },
   footerText: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: "#9CA3AF",
     textAlign: "center",
-    lineHeight: 1.5,
+    lineHeight: 1.4,
   },
 });
 
@@ -193,7 +206,7 @@ const LOGO_PATH = path.join(process.cwd(), "public", "logo.png");
 
 function tierColors(label: string): { bg: string; text: string } {
   if (label === "Strong Signal") return { bg: TEAL_LIGHT, text: GREEN };
-  if (label === "Steady Signal") return { bg: "#EAF2FE", text: "#1D4ED8" };
+  if (label === "Steady Signal") return { bg: BLUE_LIGHT, text: BLUE };
   return { bg: ORANGE_LIGHT, text: ORANGE };
 }
 
@@ -232,23 +245,35 @@ function fmtMoney(value?: number | null): string {
   return `$${Math.round(value).toLocaleString()}`;
 }
 
-function fmtSaleDate(comp: ComparableRow): string {
+function compDate(comp: ComparableRow): Date | null {
   const dateStr = comp.removedDate ?? comp.lastSeenDate ?? comp.listedDate;
-  if (!dateStr) return "-";
+  if (!dateStr) return null;
   const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return "-";
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function fmtSaleDate(comp: ComparableRow): string {
+  const d = compDate(comp);
+  if (!d) return "-";
   return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 }
 
-// Comps are split into pages of this size so the table never collides with
-// the fixed footer — each chunk gets its own page instead of one long table
-// that can overflow past the footer and leave a blank trailing page.
-const COMPS_PER_PAGE = 9;
+// Show only the most recent sales, capped at 10, so the whole report
+// (comps + neighborhood summary) fits on a single page like the client's
+// reference PDF — no multi-page pagination needed.
+const MAX_COMPS = 10;
 
-function chunk<T>(arr: T[], size: number): T[][] {
-  const out: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
-  return out;
+function mostRecentComps(comparables: ComparableRow[]): ComparableRow[] {
+  return [...comparables]
+    .sort((a, b) => {
+      const da = compDate(a);
+      const db = compDate(b);
+      if (!da && !db) return 0;
+      if (!da) return 1;
+      if (!db) return -1;
+      return db.getTime() - da.getTime();
+    })
+    .slice(0, MAX_COMPS);
 }
 
 export function FullReportPdf({
@@ -269,11 +294,10 @@ export function FullReportPdf({
   medianDaysOnMarket,
 }: FullReportPdfProps) {
   const tierStyle = tierColors(signalLabel);
-  const compPages = chunk(comparables.slice(0, 27), COMPS_PER_PAGE);
+  const recentComps = mostRecentComps(comparables);
 
   return (
     <Document>
-      {/* Page 1 — summary + property details + first batch of comps */}
       <Page size="A4" style={styles.page}>
         <View style={styles.headerBand}>
           <View style={styles.headerTop}>
@@ -337,10 +361,10 @@ export function FullReportPdf({
             </View>
           </View>
 
-          {compPages[0] && compPages[0].length > 0 && (
+          {recentComps.length > 0 && (
             <>
-              <Text style={[styles.sectionLabel, { marginTop: 16 }]}>
-                Comparable Sales ({comparables.length})
+              <Text style={[styles.sectionLabel, { marginTop: 14 }]}>
+                Comparable Sales (Most Recent {recentComps.length})
               </Text>
               <View style={styles.tableHeader}>
                 <View style={styles.colAddress}>
@@ -362,7 +386,7 @@ export function FullReportPdf({
                   <Text style={styles.tableHeaderText}>Sale Date</Text>
                 </View>
               </View>
-              {compPages[0].map((c, i) => (
+              {recentComps.map((c, i) => (
                 <View
                   key={i}
                   wrap={false}
@@ -405,109 +429,10 @@ export function FullReportPdf({
               ))}
             </>
           )}
-        </View>
 
-        <View style={styles.footer} fixed>
-          <Text style={styles.footerText}>
-            This automated report is for informational purposes only and is not
-            a formal appraisal.{"\n"}© {new Date().getFullYear()} Listing
-            Signal™
+          <Text style={[styles.sectionLabel, { marginTop: 14 }]}>
+            Neighborhood Market Summary
           </Text>
-        </View>
-      </Page>
-
-      {/* Additional comp pages, only rendered if there are more comps than fit on page 1 */}
-      {compPages.slice(1).map((pageComps, pageIdx) => (
-        <Page key={pageIdx} size="A4" style={styles.page}>
-          <View style={styles.headerBand}>
-            <View style={styles.headerTop}>
-              <Image src={LOGO_PATH} style={styles.logoImage} />
-            </View>
-            <Text style={styles.title}>Comparable Sales (continued)</Text>
-            <Text style={styles.address}>{address}</Text>
-          </View>
-
-          <View style={styles.content}>
-            <View style={styles.tableHeader}>
-              <View style={styles.colAddress}>
-                <Text style={styles.tableHeaderText}>Address</Text>
-              </View>
-              <View style={styles.colDist}>
-                <Text style={styles.tableHeaderText}>Dist.</Text>
-              </View>
-              <View style={styles.colBeds}>
-                <Text style={styles.tableHeaderText}>Bed/Bath</Text>
-              </View>
-              <View style={styles.colSqft}>
-                <Text style={styles.tableHeaderText}>Sq Ft</Text>
-              </View>
-              <View style={styles.colPrice}>
-                <Text style={styles.tableHeaderText}>Price</Text>
-              </View>
-              <View style={styles.colDate}>
-                <Text style={styles.tableHeaderText}>Sale Date</Text>
-              </View>
-            </View>
-            {pageComps.map((c, i) => (
-              <View
-                key={i}
-                wrap={false}
-                style={[styles.tableRow, i % 2 === 1 ? styles.tableRowAlt : {}]}
-              >
-                <View style={styles.colAddress}>
-                  <Text style={styles.tableCellText}>
-                    {c.formattedAddress ?? "-"}
-                  </Text>
-                </View>
-                <View style={styles.colDist}>
-                  <Text style={styles.tableCellSub}>
-                    {c.distance != null ? `${c.distance.toFixed(2)} mi` : "-"}
-                  </Text>
-                </View>
-                <View style={styles.colBeds}>
-                  <Text style={styles.tableCellSub}>
-                    {c.bedrooms ?? "-"}/{c.bathrooms ?? "-"}
-                  </Text>
-                </View>
-                <View style={styles.colSqft}>
-                  <Text style={styles.tableCellSub}>
-                    {c.squareFootage != null
-                      ? c.squareFootage.toLocaleString()
-                      : "-"}
-                  </Text>
-                </View>
-                <View style={styles.colPrice}>
-                  <Text style={styles.tableCellText}>{fmtMoney(c.price)}</Text>
-                </View>
-                <View style={styles.colDate}>
-                  <Text style={styles.tableCellSub}>{fmtSaleDate(c)}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.footer} fixed>
-            <Text style={styles.footerText}>
-              This automated report is for informational purposes only and is
-              not a formal appraisal.{"\n"}© {new Date().getFullYear()} Listing
-              Signal™
-            </Text>
-          </View>
-        </Page>
-      ))}
-
-      {/* Final page — neighborhood summary, always starts fresh so it never
-          collides with the comps table or the fixed footer. */}
-      <Page size="A4" style={styles.page}>
-        <View style={styles.headerBand}>
-          <View style={styles.headerTop}>
-            <Image src={LOGO_PATH} style={styles.logoImage} />
-          </View>
-          <Text style={styles.title}>Neighborhood Market Summary</Text>
-          <Text style={styles.address}>{address}</Text>
-        </View>
-
-        <View style={styles.content}>
           <View style={styles.neighborhoodGrid}>
             <View style={styles.neighborhoodBox}>
               <Text style={styles.neighborhoodValue}>
@@ -531,6 +456,34 @@ export function FullReportPdf({
               </Text>
               <Text style={styles.neighborhoodLabel}>
                 Median Days on Market
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.legendRow}>
+            <View style={styles.legendItem}>
+              <View style={styles.legendHeader}>
+                <View style={[styles.legendDot, { backgroundColor: TEAL }]} />
+                <Text style={styles.legendTitle}>80-100 — Strong Signal</Text>
+              </View>
+              <Text style={styles.legendDesc}>The market is on your side.</Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={styles.legendHeader}>
+                <View style={[styles.legendDot, { backgroundColor: BLUE }]} />
+                <Text style={styles.legendTitle}>60-79 — Steady Signal</Text>
+              </View>
+              <Text style={styles.legendDesc}>
+                A balanced market with smart opportunities.
+              </Text>
+            </View>
+            <View style={styles.legendItem}>
+              <View style={styles.legendHeader}>
+                <View style={[styles.legendDot, { backgroundColor: ORANGE }]} />
+                <Text style={styles.legendTitle}>0-59 — Opportunity Signal</Text>
+              </View>
+              <Text style={styles.legendDesc}>
+                Strong potential forming in your area.
               </Text>
             </View>
           </View>
