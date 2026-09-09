@@ -476,6 +476,7 @@ export default function ResultsSection({
                 medianPricePerSqft={
                   report.marketStats?.medianPricePerSquareFoot
                 }
+                bookingUrl={`${process.env.NEXT_PUBLIC_GHL_BOOKING_URL}?email=${encodeURIComponent(form.email)}&name=${encodeURIComponent(form.firstName)}`}
               />
             )}
 

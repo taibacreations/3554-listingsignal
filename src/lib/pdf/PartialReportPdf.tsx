@@ -379,7 +379,7 @@ export function PartialReportPdf({
                     strokeLinejoin="round"
                   />
                 </Svg>
-                <Text>Book Your Free Home Walkthrough</Text>
+                <Text>Schedule My Free Home Review</Text>
               </Link>
             ) : (
               <View style={styles.ctaPill}>
@@ -398,7 +398,7 @@ export function PartialReportPdf({
                     strokeLinejoin="round"
                   />
                 </Svg>
-                <Text>Book Your Free Home Walkthrough</Text>
+                <Text>Schedule My Free Home Review</Text>
               </View>
             )}
           </View>

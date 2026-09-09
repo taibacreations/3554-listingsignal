@@ -20,6 +20,7 @@ interface LockedComparablesProps {
   medianPrice?: number | null;
   medianPricePerSqft?: number | null;
   medianYearBuilt?: number | null;
+  bookingUrl?: string;
 }
 
 export default function LockedComparables({
@@ -27,6 +28,7 @@ export default function LockedComparables({
   medianPrice,
   medianPricePerSqft,
   medianYearBuilt,
+  bookingUrl,
 }: LockedComparablesProps) {
   if (!comparables.length) return null;
 
@@ -86,9 +88,14 @@ export default function LockedComparables({
 
         {/* Overlay */}
         <div className="pointer-events-none absolute inset-0 flex items-end justify-center bg-gradient-to-t from-white via-white/90 to-transparent pb-6">
-          <div className={`${inter.className} pointer-events-auto rounded-full bg-[#0B1E33] px-5 py-2.5 text-sm font-semibold text-white shadow-lg`}>
-            🔒 Book a free home visit to unlock all {comparables.length} comps + neighborhood summary
-          </div>
+          <a
+            href={bookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${inter.className} pointer-events-auto rounded-full bg-[#0B1E33] px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-transform hover:-translate-y-0.5`}
+          >
+            🔒 Schedule My Free Home Review to unlock all {comparables.length} comps + neighborhood summary
+          </a>
         </div>
       </div>
     </section>

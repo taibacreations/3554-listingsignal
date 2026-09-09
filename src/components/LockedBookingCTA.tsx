@@ -10,11 +10,6 @@ interface LockedBookingCTAProps {
 }
 
 export default function LockedBookingCTA({ bookingUrl }: LockedBookingCTAProps) {
-  const handleUnlock = () => {
-    if (bookingUrl) {
-      window.open(bookingUrl, "_blank", "noopener,noreferrer");
-    }
-  };
   return (
     <section className="mx-auto mt-6 w-full max-w-[1200px] px-4 pb-10 md:px-6 md:mt-8 xl:px-10">
 
@@ -42,14 +37,15 @@ export default function LockedBookingCTA({ bookingUrl }: LockedBookingCTAProps) 
 
         <div className="relative mx-auto mt-7 w-full max-w-md">
           <div className="absolute inset-0 animate-pulse rounded-xl bg-[#1FAE9F]/30 blur-md" />
-          <button
-            type="button"
-            onClick={handleUnlock}
+          <a
+            href={bookingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className={`${inter.className} relative z-10 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#1FAE9F] px-6 py-4 text-[15px] font-semibold text-white shadow-[0_8px_24px_-8px_rgba(31,174,159,0.6)] transition-all duration-300 hover:bg-[#189184] hover:-translate-y-0.5 active:translate-y-0`}
           >
             <span className="text-xl leading-none">📅</span>
-            Unlock with a Free Home Visit
-          </button>
+            Schedule My Free Home Review
+          </a>
         </div>
 
         <div className="mt-4 flex items-center justify-center gap-4">
@@ -156,14 +152,15 @@ export default function LockedBookingCTA({ bookingUrl }: LockedBookingCTAProps) 
             {/* CTA Button with pulse glow */}
             <div className="relative w-full">
               <div className="absolute inset-0 animate-pulse rounded-xl bg-[#1FAE9F]/25 blur-lg" />
-              <button
-                type="button"
-                onClick={handleUnlock}
+              <a
+                href={bookingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`${inter.className} relative z-10 flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#1FAE9F] px-6 py-4 text-[15px] font-semibold text-white shadow-[0_8px_28px_-8px_rgba(31,174,159,0.65)] transition-all duration-300 hover:bg-[#189184] hover:shadow-[0_16px_40px_-8px_rgba(31,174,159,0.85)] hover:-translate-y-0.5 active:translate-y-0`}
               >
                 <span className="text-xl leading-none">📅</span>
-                Unlock with a Free Home Visit
-              </button>
+                Schedule My Free Home Review
+              </a>
             </div>
 
             {/* Trust pills */}
